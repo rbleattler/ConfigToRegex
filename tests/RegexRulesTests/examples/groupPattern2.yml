@@ -1,0 +1,15 @@
+Type: Group
+Message: Testing Group Pattern
+Patterns:
+  - Type: Literal
+    Message: testGroup0 message
+    Value:
+      Value: testGroup0
+  - Type: Literal
+    Message: testGroup1 message
+    Value:
+      Value: testGroup1
+Properties:
+  Name: testGroup0Name
+  GroupType: Named
+  NamedGroupStyle: AngleBrackets
