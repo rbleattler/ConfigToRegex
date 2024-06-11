@@ -2,7 +2,7 @@ using RegexRules;
 
 namespace RegexRulesTests;
 
-public class UnitTest1
+public class GroupPatternTests
 {
     string _groupPatternFile = "..\\..\\..\\..\\..\\examples\\groupPattern.yml";
     string _groupPatternFileContents = string.Empty;
