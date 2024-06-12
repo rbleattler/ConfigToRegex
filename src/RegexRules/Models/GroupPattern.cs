@@ -28,7 +28,6 @@ public class GroupPattern : IGroup
   string IPattern.Type
   {
     get => _type;
-    // Type will always be "Group"
     set => _ = value;
   }
 
@@ -86,16 +85,20 @@ public class GroupPattern : IGroup
       Quantifiers = new Quantifier();
       return;
     }
-    if (groupObjectPattern.StartsWith("{"))
+    if (IsJson(groupObjectPattern))
     {
       DeserializeJson(groupObjectPattern);
     }
-    else
+    if (IsYaml(groupObjectPattern))
     {
       DeserializeYaml(groupObjectPattern);
     }
 
   }
+
+  private bool IsJson(string patternObject) => ((IPattern)this).IsJson(patternObject);
+
+  private bool IsYaml(string patternObject) => ((IPattern)this).IsYaml(patternObject);
 
   private void DeserializeYaml(string groupObjectPattern)
   {
