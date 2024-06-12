@@ -2,6 +2,7 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace RegexRules;
 
@@ -22,6 +23,33 @@ public class PatternProperties : IPatternProperties, ISerializable
   [YamlMember(Alias = "NamedGroupStyle")]
   [AllowedValues("SingleQuote", "AngleBrackets", "PStyle")]
   public string? NamedGroupStyle { get; set; }
+
+  public PatternProperties()
+  { }
+
+  public PatternProperties(string patternPropertiesObject)
+  {
+    if (!string.IsNullOrWhiteSpace(patternPropertiesObject))
+    {
+      if (patternPropertiesObject.StartsWith('{'))
+      {
+        var patternProperties = JsonSerializer.Deserialize<PatternProperties>(patternPropertiesObject);
+        Name = patternProperties?.Name;
+        GroupType = patternProperties?.GroupType;
+        NamedGroupStyle = patternProperties?.NamedGroupStyle;
+      }
+      else
+      {
+        var deserializer = new Deserializer();
+        var patternProperties = deserializer.Deserialize<PatternProperties>(patternPropertiesObject);
+        Name = patternProperties.Name;
+        GroupType = patternProperties.GroupType;
+        NamedGroupStyle = patternProperties.NamedGroupStyle;
+      }
+    }
+  }
+
+
 
   public void GetObjectData(SerializationInfo info, StreamingContext context)
   {
