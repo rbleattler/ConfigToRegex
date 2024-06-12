@@ -4,6 +4,7 @@ using NJsonSchema;
 using NJsonSchema.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace RegexRules;
 
@@ -32,6 +33,16 @@ public interface IPattern
   private static bool IsValidPatternType(string type)
   {
     return type == "Literal" || type == "Anchor" || type == "CharacterClass" || type == "Group";
+  }
+
+  internal bool IsJson(string patternObject)
+  {
+    return patternObject.StartsWith("{") && patternObject.EndsWith("}");
+  }
+
+  internal bool IsYaml(string patternObject)
+  {
+    return Regex.IsMatch(patternObject, @"(?:-?[\s\w\d]*):{1}(?:[\s\w\d\[\]]*)");
   }
 
   private void DeserializeYaml(string patternObject)
