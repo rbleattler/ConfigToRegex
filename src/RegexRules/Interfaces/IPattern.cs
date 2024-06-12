@@ -42,7 +42,7 @@ public interface IPattern
 
   internal bool IsYaml(string patternObject)
   {
-    return Regex.IsMatch(patternObject, @"(?:-?[\s\w\d]*):{1}(?:[\s\w\d\[\]]*)");
+    return Regex.IsMatch(patternObject, Validation.Patterns.Yaml);
   }
 
   private void DeserializeYaml(string patternObject)

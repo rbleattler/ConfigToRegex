@@ -76,7 +76,7 @@ public class Pattern : IPattern, ISerializable
     {
       DeserializeJson(patternObject);
     }
-    else if (Regex.IsMatch(patternObject, @"(?:-?[\s\w\d]*):{1}(?:[\s\w\d\[\]]*)"))
+    else if (Regex.IsMatch(patternObject, Validation.Patterns.Yaml))
     {
       DeserializeYaml(patternObject);
     }
@@ -113,7 +113,7 @@ public class Pattern : IPattern, ISerializable
     return Value.ToString()!;
   }
 
-  public void GetObjectData(SerializationInfo info, StreamingContext context)
+  public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
   {
     info.AddValue("Id", Id);
     info.AddValue("Type", Type);
@@ -122,6 +122,23 @@ public class Pattern : IPattern, ISerializable
     info.AddValue("Properties", Properties);
     info.AddValue("Message", Message);
   }
+
+  protected Pattern(SerializationInfo info, StreamingContext context)
+  {
+
+    Id = info.GetString("Id");
+    Type = info.GetString("Type")!;
+    Value = (PatternValue)info.GetValue("Value", typeof(PatternValue))! ?? new PatternValue(string.Empty);
+    Quantifiers = (Quantifier?)info.GetValue("Quantifiers", typeof(Quantifier));
+    Properties = (IPatternProperties)info.GetValue("Properties", typeof(IPatternProperties))!;
+    Message = info.GetString("Message");
+  }
+
+  public static implicit operator PatternValue(Pattern pattern)
+  {
+    return pattern.Value;
+  }
+
   private void DeserializeYaml(string patternObject)
   {
     var deserializer = new Deserializer();
