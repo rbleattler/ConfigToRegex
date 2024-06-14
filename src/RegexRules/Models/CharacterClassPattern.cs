@@ -5,7 +5,9 @@ using FluentRegex;
 using System.Text.Json;
 using NJsonSchema;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("RegexRulesTests")]
 namespace RegexRules;
 
 public class CharacterClassPattern : ICharacterClass
@@ -116,16 +118,13 @@ public class CharacterClassPattern : ICharacterClass
         }
     }
 
-    public override string ToString()
-    {
-        return Value;
-    }
+    public override string? ToString() => Value.ToString() ?? string.Empty;
 
-    private bool IsJson(string patternObject) => ((IPattern)this).IsJson(patternObject);
+    internal bool IsJson(string patternObject) => ((IPattern)this).IsJson(patternObject);
 
-    private bool IsYaml(string patternObject) => ((IPattern)this).IsYaml(patternObject);
+    internal bool IsYaml(string patternObject) => ((IPattern)this).IsYaml(patternObject);
 
-    private void DeserializeYaml(string patternObject)
+    internal void DeserializeYaml(string patternObject)
     {
         var deserializer = new Deserializer();
         var pattern = deserializer.Deserialize<Pattern>(patternObject);
@@ -138,7 +137,7 @@ public class CharacterClassPattern : ICharacterClass
         }
     }
 
-    private void DeserializeJson(string patternObject)
+    internal void DeserializeJson(string patternObject)
     {
         var pattern = JsonSerializer.Deserialize<IPattern>(patternObject);
         if (pattern != null)
@@ -150,7 +149,7 @@ public class CharacterClassPattern : ICharacterClass
         }
     }
 
-    private static string GetCharacterClass(string value)
+    public static string GetCharacterClass(string value)
     {
         // get the value of the appropriate CharacterClass from the static class CharacterClasses in FluentRegex
         string CharacterClass = default!;
@@ -168,18 +167,18 @@ public class CharacterClassPattern : ICharacterClass
         return CharacterClass;
     }
 
-    private static bool IsValidCharacterClassType(string type)
+    internal static bool IsValidCharacterClassType(string type)
     {
         return GetValidCharacterClassTypes().Contains(type);
     }
 
-    private static List<string?> GetValidCharacterClassTypes()
+    internal static List<string?> GetValidCharacterClassTypes()
     {
 
         return typeof(CharacterClasses).GetFields().Select(f => f.Name).ToList()!;
     }
 
-    private static bool IsValidPatternType(string type)
+    internal static bool IsValidPatternType(string type)
     {
         return type == "Literal" || type == "CharacterClass" || type == "CharacterClass" || type == "Group";
     }
