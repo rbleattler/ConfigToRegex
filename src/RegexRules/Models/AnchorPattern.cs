@@ -176,7 +176,6 @@ public class AnchorPattern : IAnchor
     private static List<string?> GetValidAnchorTypes()
     {
         // get all anchor type names from static class Anchors in FluentRegex
-        // return typeof(Anchors).GetFields().Select(f => f.GetValue(null)).ToList();
         return typeof(Anchors).GetFields().Select(f => f.Name).ToList()!;
     }
 
