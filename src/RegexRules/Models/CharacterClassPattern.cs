@@ -175,7 +175,6 @@ public class CharacterClassPattern : ICharacterClass
 
     private static List<string?> GetValidCharacterClassTypes()
     {
-        //FIXME: Add functionality for character classes which closely resembles what we did for Anchors
 
         return typeof(CharacterClasses).GetFields().Select(f => f.Name).ToList()!;
     }
