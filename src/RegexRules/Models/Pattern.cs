@@ -32,8 +32,7 @@ public class Pattern : IPattern, ISerializable
   [Required]
   [JsonPropertyName("Type")]
   [YamlMember(Alias = "Type")]
-  [JsonConverter(typeof(JsonStringEnumConverter))]
-  [AllowedValues("Literal", "Anchor", "CharacterClass", "Group")]
+  // [AllowedValues("Literal", "Anchor", "CharacterClass", "Group")]
   public string Type
   {
     get => _type;
@@ -116,7 +115,7 @@ public class Pattern : IPattern, ISerializable
   public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
   {
     info.AddValue("Id", Id);
-    info.AddValue("Type", Type);
+    info.AddValue("Type", Type ?? "Literal");
     info.AddValue("Value", Value); // Modified property name
     info.AddValue("Quantifiers", Quantifiers);
     info.AddValue("Properties", Properties);
