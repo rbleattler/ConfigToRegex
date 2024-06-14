@@ -15,7 +15,6 @@ public class PatternProperties : IPatternProperties, ISerializable
 
   [JsonPropertyName("GroupType")]
   [YamlMember(Alias = "GroupType")]
-  [JsonConverter(typeof(JsonStringEnumConverter))]
   [AllowedValues("NonCapturing", "Capturing", "Named")]
   public string? GroupType { get; set; }
 
