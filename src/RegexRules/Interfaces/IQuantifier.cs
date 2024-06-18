@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace RegexRules;
 
-public interface IQuantifier : ISerializable
+public interface IQuantifier
 {
   [JsonPropertyName("Min")]
   [YamlMember(Alias = "Min", Description = "The minimum number of times the pattern must match.")]
@@ -25,15 +25,5 @@ public interface IQuantifier : ISerializable
   [JsonPropertyName("Greedy")]
   [YamlMember(Alias = "Greedy", Description = "Whether the quantifier is greedy.")]
   public bool? Greedy { get; set; }
-
-  public new void GetObjectData(SerializationInfo info, StreamingContext context)
-  {
-    // Serialize the object
-    info.AddValue("Min", Min);
-    info.AddValue("Max", Max);
-    info.AddValue("Exactly", Exactly);
-    info.AddValue("Lazy", Lazy);
-    info.AddValue("Greedy", Greedy);
-  }
 
 }

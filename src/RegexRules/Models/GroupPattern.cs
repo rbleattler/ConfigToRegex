@@ -126,13 +126,4 @@ public class GroupPattern : IGroup
 
   }
 
-  // public void GetObjectData(SerializationInfo info, StreamingContext context)
-  // {
-  //   // Serialize the object
-  //   info.AddValue("Id", Id);
-  //   info.AddValue("Quantifiers", Quantifiers);
-  //   info.AddValue("Position", Position);
-  //   info.AddValue("Patterns", Patterns);
-  //   info.AddValue("Message", Message);
-  // }
 }

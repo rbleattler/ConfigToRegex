@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace RegexRules;
 
 [YamlSerializable]
-public class Pattern : IPattern, ISerializable
+public class Pattern : IPattern
 {
   private string _type = "Literal";
 
@@ -110,27 +110,6 @@ public class Pattern : IPattern, ISerializable
   public override string ToString()
   {
     return Value.ToString()!;
-  }
-
-  public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-  {
-    info.AddValue("Id", Id);
-    info.AddValue("Type", Type ?? "Literal");
-    info.AddValue("Value", Value); // Modified property name
-    info.AddValue("Quantifiers", Quantifiers);
-    info.AddValue("Properties", Properties);
-    info.AddValue("Message", Message);
-  }
-
-  protected Pattern(SerializationInfo info, StreamingContext context)
-  {
-
-    Id = info.GetString("Id");
-    Type = info.GetString("Type")!;
-    Value = (PatternValue)info.GetValue("Value", typeof(PatternValue))! ?? new PatternValue(string.Empty);
-    Quantifiers = (Quantifier?)info.GetValue("Quantifiers", typeof(Quantifier));
-    Properties = (IPatternProperties)info.GetValue("Properties", typeof(IPatternProperties))!;
-    Message = info.GetString("Message");
   }
 
   public static implicit operator PatternValue(Pattern pattern)

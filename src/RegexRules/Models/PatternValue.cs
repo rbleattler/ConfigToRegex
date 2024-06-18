@@ -69,12 +69,7 @@ public class PatternValue : IPatternValue
 
   public override string? ToString()
   {
-    return Value.ToString();
+    return Value;
   }
 
-
-  public void GetObjectData(SerializationInfo info, StreamingContext context)
-  {
-    info.AddValue("Value", Value);
-  }
 }

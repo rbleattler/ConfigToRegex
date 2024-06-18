@@ -73,14 +73,4 @@ public class Quantifier : IQuantifier
     }
   }
 
-  public void GetObjectData(SerializationInfo info, StreamingContext context)
-  {
-    // Serialize the object
-    info.AddValue("Min", Min);
-    info.AddValue("Max", Max);
-    info.AddValue("Exactly", Exactly);
-    info.AddValue("Lazy", Lazy);
-    info.AddValue("Greedy", Greedy);
-  }
-
 }

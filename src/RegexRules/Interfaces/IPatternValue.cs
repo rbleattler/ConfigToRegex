@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace RegexRules;
 
-public interface IPatternValue : ISerializable
+public interface IPatternValue
 {
 
   [JsonPropertyName("Value")]

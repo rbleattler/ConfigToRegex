@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace RegexRules;
 
-public interface IPatternProperties : ISerializable
+public interface IPatternProperties
 {
   [JsonPropertyName("Name")]
   [YamlMember(Alias = "Name")]

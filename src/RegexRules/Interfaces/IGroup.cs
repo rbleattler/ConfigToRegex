@@ -31,16 +31,6 @@ public interface IGroup : IPattern
   [YamlIgnore]
   JsonSchema IPattern.JsonSchema => JsonSchema.FromType(GetType());
 
-  // public void GetObjectData(SerializationInfo info, StreamingContext context)
-  // {
-  //   // Serialize the object
-  //   info.AddValue("Id", Id);
-  //   info.AddValue("Quantifiers", Quantifiers);
-  //   info.AddValue("Position", Position);
-  //   info.AddValue("Value", Value);
-  //   info.AddValue("Message", Message);
-  // }
-
   private void DeserializeYaml(string groupObjectPattern)
   {
     var deserializer = new Deserializer();

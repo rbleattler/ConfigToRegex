@@ -7,7 +7,7 @@ using System.Text.Json;
 namespace RegexRules;
 
 [YamlSerializable]
-public class PatternProperties : IPatternProperties, ISerializable
+public class PatternProperties : IPatternProperties
 {
   [JsonPropertyName("Name")]
   [YamlMember(Alias = "Name")]
@@ -48,12 +48,4 @@ public class PatternProperties : IPatternProperties, ISerializable
     }
   }
 
-
-
-  public void GetObjectData(SerializationInfo info, StreamingContext context)
-  {
-    info.AddValue("Name", Name);
-    info.AddValue("GroupType", GroupType);
-    info.AddValue("NamedGroupStyle", NamedGroupStyle);
-  }
 }
