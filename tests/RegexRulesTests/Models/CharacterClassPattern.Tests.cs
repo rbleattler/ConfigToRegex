@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using FluentRegex;
 using RegexRules;
+using YamlDotNet.Serialization;
 
 namespace RegexRulesTests;
 
@@ -22,10 +23,9 @@ public class CharacterClassPatternTests : RegexRuleTestCore
     [Fact]
     public void Constructor_InitializesCorrectly()
     {
-        //FIXME: Fails on Evaluation of CharacterClassPattern.ToString(). not sure why, but it is crashing the test
-        var pattern = new CharacterClassPattern("Digit", new Quantifier{ Min = 1, Max = 3 });
+        var pattern = new CharacterClassPattern("Digit", new Quantifier { Min = 1, Max = 3 });
 
-        Assert.Equal("\\D", pattern.ToString());
+        Assert.Equal("\\d", pattern.ToString());
         Assert.Equal(1, pattern.Quantifiers?.Min);
         Assert.Equal(3, pattern.Quantifiers?.Max);
     }
@@ -50,32 +50,33 @@ public class CharacterClassPatternTests : RegexRuleTestCore
     [Fact]
     public void IsYaml_IdentifiesYamlCorrectly()
     {
-        var pattern = new CharacterClassPattern();
+        var pattern = new CharacterClassPattern("\\d");
 
         Assert.True(pattern.IsYaml("Id: test"));
+        // Will throw an exception if the pattern is not valid yaml
+
         Assert.False(pattern.IsYaml("not yaml"));
     }
 
     [Fact]
     public void DeserializeJson_DeserializesCorrectly()
     {
-        var pattern = new CharacterClassPattern();
-        pattern.DeserializeJson("{\"Id\":\"test\",\"Type\":\"CharacterClass\",\"Value\":\"test value\"}");
+        var pattern = new CharacterClassPattern("\\d");
+        pattern.DeserializeJson("{\"Id\":\"test\",\"Type\":\"CharacterClass\",\"Value\":{\"Value\":\"Digit\"}}");
 
-        Assert.Equal("test", pattern.Id);
         Assert.Equal("CharacterClass", pattern.Type);
-        Assert.Equal("test value", pattern.Value.ToString());
+        Assert.Equal("\\d", pattern.Value.ToString());
     }
 
     [Fact]
     public void DeserializeYaml_DeserializesCorrectly()
     {
-        var pattern = new CharacterClassPattern();
-        pattern.DeserializeYaml("Id: test\nType: CharacterClass\nValue: test value");
+        var pattern = new CharacterClassPattern("\\d");
+        var basicObject = new Deserializer().Deserialize<object>(ReadFileAsString(AllTestFiles[0]));
+        pattern.DeserializeYaml(ReadFileAsString(AllTestFiles[0]));
 
-        Assert.Equal("test", pattern.Id);
         Assert.Equal("CharacterClass", pattern.Type);
-        Assert.Equal("test value", pattern.Value.ToString());
+        Assert.Equal("\\d", pattern.Value.ToString());
     }
 
     [Fact]
