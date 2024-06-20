@@ -183,4 +183,32 @@ public class AnchorPattern : IAnchor
     {
         return type == "Literal" || type == "Anchor" || type == "CharacterClass" || type == "Group";
     }
+
+    public string SerializeYaml()
+    {
+        //TODO: Implement AnchorPattern.SerializeYaml()
+        throw new NotImplementedException();
+    }
+
+    public string SerializeJson()
+    {
+        //TODO: Implement AnchorPattern.SerializeJson()
+        throw new NotImplementedException();
+    }
+
+    void IRegexSerializable.DeserializeYaml(string yamlString)
+    {
+        DeserializeYaml(yamlString);
+    }
+
+    void IRegexSerializable.DeserializeJson(string jsonString)
+    {
+        DeserializeJson(jsonString);
+    }
+
+    public string ToRegex()
+    {
+        //TODO: Implement AnchorPattern.ToRegex()
+        throw new NotImplementedException();
+    }
 }

@@ -50,21 +50,31 @@ public class PatternProperties : IPatternProperties
 
   public string SerializeYaml()
   {
+    //TODO: Implement PatternProperties.SerializeYaml
     throw new NotImplementedException();
   }
 
   public string SerializeJson()
   {
+    //TODO: Implement PatternProperties.SerializeJson
     throw new NotImplementedException();
   }
 
-  public IRegexSerializable DeserializeYaml(string yamlString)
+  void IRegexSerializable.DeserializeJson(string jsonString)
   {
+    //TODO: Implement PatternProperties.DeserializeJson
     throw new NotImplementedException();
   }
 
-  public IRegexSerializable DeserializeJson(string jsonString)
+  public string ToRegex()
   {
+    //TODO: Implement PatternProperties.ToRegex
+    throw new NotImplementedException();
+  }
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    //TODO: Implement PatternProperties.DeserializeYaml
     throw new NotImplementedException();
   }
 }

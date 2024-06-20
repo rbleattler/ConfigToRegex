@@ -279,4 +279,32 @@ public class CharacterClassPattern : ICharacterClass
     {
         return type == "Literal" || type == "CharacterClass" || type == "CharacterClass" || type == "Group";
     }
+
+    public string SerializeYaml()
+    {
+        //TODO: Implement CharacterClassPattern.SerializeYaml
+        throw new NotImplementedException();
+    }
+
+    public string SerializeJson()
+    {
+        //TODO: Implement CharacterClassPattern.SerializeJson
+        throw new NotImplementedException();
+    }
+
+    void IRegexSerializable.DeserializeYaml(string yamlString)
+    {
+        DeserializeYaml(yamlString);
+    }
+
+    void IRegexSerializable.DeserializeJson(string jsonString)
+    {
+        DeserializeJson(jsonString);
+    }
+
+    public string ToRegex()
+    {
+        //TODO: Implement CharacterClassPattern.ToRegex
+        throw new NotImplementedException();
+    }
 }

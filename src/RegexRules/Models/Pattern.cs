@@ -151,4 +151,33 @@ public class Pattern : IPattern
     return type == "Literal" || type == "Anchor" || type == "CharacterClass" || type == "Group";
   }
 
+
+  public string SerializeYaml()
+  {
+    //TODO: Implement Pattern.SerializeYaml()
+    throw new NotImplementedException();
+  }
+
+  public string SerializeJson()
+  {
+    //TODO: Implement Pattern.SerializeJson()
+    throw new NotImplementedException();
+  }
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    DeserializeYaml(yamlString);
+  }
+
+  void IRegexSerializable.DeserializeJson(string jsonString)
+  {
+    DeserializeJson(jsonString);
+  }
+
+  public string ToRegex()
+  {
+    //TODO: Implement Pattern.ToRegex()
+    throw new NotImplementedException();
+  }
+
 }

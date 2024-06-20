@@ -126,4 +126,31 @@ public class GroupPattern : IGroup
 
   }
 
+  public string SerializeYaml()
+  {
+    //TODO: Implement GroupPattern.SerializeYaml()
+    throw new NotImplementedException();
+  }
+
+  public string SerializeJson()
+  {
+    //TODO: Implement GroupPattern.SerializeJson()
+    throw new NotImplementedException();
+  }
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    DeserializeYaml(yamlString);
+  }
+
+  void IRegexSerializable.DeserializeJson(string jsonString)
+  {
+    DeserializeJson(jsonString);
+  }
+
+  public string ToRegex()
+  {
+    //TODO: Implement GroupPattern.ToRegex()
+    throw new NotImplementedException();
+  }
 }

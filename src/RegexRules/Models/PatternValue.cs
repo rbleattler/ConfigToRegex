@@ -78,4 +78,34 @@ public class PatternValue : IPatternValue
 
   }
 
+
+  public string SerializeYaml()
+  {
+    //TODO: Implement PatternValue.SerializeYaml
+    throw new NotImplementedException();
+  }
+
+  public string SerializeJson()
+  {
+    //TODO: Implement PatternValue.SerializeJson
+    throw new NotImplementedException();
+  }
+
+  void IRegexSerializable.DeserializeJson(string jsonString)
+  {
+    //TODO: Implement PatternValue.DeserializeJson
+    throw new NotImplementedException();
+  }
+
+  public string ToRegex()
+  {
+    //TODO: Implement PatternValue.ToRegex
+    throw new NotImplementedException();
+  }
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    //TODO: Implement PatternValue.DeserializeYaml
+    throw new NotImplementedException();
+  }
 }
