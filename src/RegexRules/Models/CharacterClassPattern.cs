@@ -12,7 +12,7 @@ namespace RegexRules;
 
 public class CharacterClassPattern : ICharacterClass
 {
-    private PatternValue _value = new PatternValue(string.Empty);
+    private PatternValue _value = new(string.Empty);
     private string _type = "CharacterClass";
 
     string? IPattern.Id { get => Id; set => Id = value; }
@@ -119,14 +119,19 @@ public class CharacterClassPattern : ICharacterClass
     {
         if (CharacterClassPatternObject.StartsWith("\\"))
         {
-            if (IsValidCharacterClassType(CharacterClassPatternObject))
-            {
-                Value = new PatternValue(CharacterClassPatternObject);
-            }
-            else if (IsValidCharacterClass(CharacterClassPatternObject))
+            if (IsValidCharacterClass(CharacterClassPatternObject))
             {
                 Value = new PatternValue(GetCharacterClass(CharacterClassPatternObject));
             }
+            else
+            {
+                throw new ArgumentException("Invalid CharacterClass Literal (" + CharacterClassPatternObject + ") Valid literals are: " + string.Join(", ", GetValidCharacterClassLiterals()));
+
+            }
+        }
+        else if (IsValidCharacterClassType(CharacterClassPatternObject))
+        {
+            Value = new PatternValue(CharacterClassPatternObject);
         }
         else if (string.IsNullOrWhiteSpace(CharacterClassPatternObject))
         {
@@ -193,15 +198,22 @@ public class CharacterClassPattern : ICharacterClass
 
     internal void DeserializeJson(string patternObject)
     {
-        CharacterClassPattern? pattern;
-        var basicObject = JsonSerializer.Deserialize<object>(patternObject);
+        dynamic? pattern;
         try
         {
-            pattern = basicObject as CharacterClassPattern;
+            pattern = JsonSerializer.Deserialize<CharacterClassPattern>(patternObject);
         }
         catch
         {
-            throw new ArgumentException("Invalid Json");
+            var basicObject = JsonSerializer.Deserialize<object>(patternObject);
+            try
+            {
+                pattern = basicObject as CharacterClassPattern;
+            }
+            catch
+            {
+                throw new ArgumentException("Invalid Json");
+            }
         }
         // This may be dumb, but it works
         if (pattern != null)
