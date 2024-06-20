@@ -67,7 +67,7 @@ public class CharacterClassPatternTests : RegexRuleTestCore
         var deserializedYaml = new Deserializer().Deserialize<object>(testContentYaml);
         var testContentJson = JsonSerializer.Serialize(deserializedYaml);
 
-        var pattern = new CharacterClassPattern(testContentJson);
+        var pattern = new CharacterClassPattern("\\d");
         pattern.DeserializeJson(testContentJson);
 
         Assert.Equal("CharacterClass", pattern.Type);
@@ -79,7 +79,7 @@ public class CharacterClassPatternTests : RegexRuleTestCore
     {
         // The test file defines a Digit CharacterClassPattern with a value of "\\d"
         var testContent = ReadFileAsString(AllTestFiles[0]);
-        var pattern = new CharacterClassPattern(testContent);
+        var pattern = new CharacterClassPattern("\\d");
         pattern.DeserializeYaml(testContent);
 
         // DOH!
