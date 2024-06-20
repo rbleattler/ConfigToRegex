@@ -1,4 +1,8 @@
-Type: Literal
-Message: test
-Value:
-  Value: test
+- Type: Literal
+  Message: test
+  Value:
+    Value: "test1 "
+- Type: Literal
+  Message: test2
+  Value:
+    Value: test2
