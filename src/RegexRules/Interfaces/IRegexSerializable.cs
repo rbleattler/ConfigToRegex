@@ -12,9 +12,9 @@ public interface IRegexSerializable
 
     string SerializeJson();
 
-    IRegexSerializable DeserializeYaml(string yamlString);
+    void DeserializeYaml(string yamlString);
 
-    IRegexSerializable DeserializeJson(string jsonString);
+    void DeserializeJson(string jsonString);
 
     string ToRegex();
 
