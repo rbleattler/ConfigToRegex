@@ -48,4 +48,23 @@ public class PatternProperties : IPatternProperties
     }
   }
 
+  public string SerializeYaml()
+  {
+    throw new NotImplementedException();
+  }
+
+  public string SerializeJson()
+  {
+    throw new NotImplementedException();
+  }
+
+  public IRegexSerializable DeserializeYaml(string yamlString)
+  {
+    throw new NotImplementedException();
+  }
+
+  public IRegexSerializable DeserializeJson(string jsonString)
+  {
+    throw new NotImplementedException();
+  }
 }
