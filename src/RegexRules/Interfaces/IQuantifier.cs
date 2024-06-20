@@ -5,7 +5,7 @@ using YamlDotNet.Serialization;
 
 namespace RegexRules;
 
-public interface IQuantifier
+public interface IQuantifier : IRegexSerializable
 {
   [JsonPropertyName("Min")]
   [YamlMember(Alias = "Min", Description = "The minimum number of times the pattern must match.")]
