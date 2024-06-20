@@ -24,7 +24,6 @@ public class CharacterClassPatternTests : RegexRuleTestCore
     [Fact]
     public void Constructor_InitializesCorrectly()
     {
-        //FIXME: Fails on Evaluation of CharacterClassPattern.ToString(). not sure why, but it is crashing the test
         var pattern = new CharacterClassPattern("Digit", new Quantifier { Min = 1, Max = 3 });
 
         Assert.Equal("\\d", pattern.ToString());
@@ -55,6 +54,8 @@ public class CharacterClassPatternTests : RegexRuleTestCore
         var pattern = new CharacterClassPattern("\\d");
 
         Assert.True(pattern.IsYaml("Id: test"));
+        // Will throw an exception if the pattern is not valid yaml
+
         Assert.False(pattern.IsYaml("not yaml"));
     }
 
@@ -80,6 +81,11 @@ public class CharacterClassPatternTests : RegexRuleTestCore
         var testContent = ReadFileAsString(AllTestFiles[0]);
         var pattern = new CharacterClassPattern(testContent);
         pattern.DeserializeYaml(testContent);
+
+        // DOH!
+        // var pattern = new CharacterClassPattern("\\d");
+        // var basicObject = new Deserializer().Deserialize<object>(ReadFileAsString(AllTestFiles[0]));
+        // pattern.DeserializeYaml(ReadFileAsString(AllTestFiles[0]));
 
         Assert.Equal("CharacterClass", pattern.Type);
         Assert.Equal("\\d", pattern.Value.ToString());

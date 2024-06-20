@@ -7,8 +7,6 @@ namespace RegexRules;
 public interface IPatternValue
 {
 
-  [JsonPropertyName("Value")]
-  [YamlMember(Alias = "Value", Description = "The value of the pattern.")]
   public dynamic Value { get; set; }
 
 }

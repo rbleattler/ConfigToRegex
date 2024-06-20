@@ -73,7 +73,7 @@ public class PatternTests : RegexRuleTestCore
         var patternFromJson = new Pattern(patternJson);
         Assert.IsType<string>(patternFromJson.Id);
         Assert.Equal("Literal", patternFromJson.Type);
-        Assert.Equal("test", patternFromJson.Value.Value);
+        Assert.Equal("test", patternFromJson.Value.ToString());
     }
 
     private string YamlToJson(string patternYaml)

@@ -1,0 +1,18 @@
+{
+  "Message": "Testing Group Pattern",
+  "Type": "Group",
+  "Properties": {
+    "NamedGroupStyle": "AngleBrackets",
+    "Name": "testGroup0Name",
+    "GroupType": "Named"
+  },
+  "Patterns": [
+    {
+      "Message": "testGroup0 message",
+      "Type": "Literal",
+      "Value": {
+        "Value": "testGroup0"
+      }
+    }
+  ]
+}

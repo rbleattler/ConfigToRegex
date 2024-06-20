@@ -134,7 +134,7 @@ public class Pattern : IPattern
 
   private void DeserializeJson(string patternObject)
   {
-    var pattern = JsonSerializer.Deserialize<IPattern>(patternObject);
+    var pattern = JsonSerializer.Deserialize<Pattern>(patternObject);
     if (pattern != null)
     {
       Id = pattern.Id;

@@ -69,7 +69,13 @@ public class PatternValue : IPatternValue
 
   public override string? ToString()
   {
-    return Value;
+    // We want to return the value of the pattern as a string. If the value is another type of pattern, we want to return the value of that pattern as a string.
+    if (Value is PatternValue patternValue)
+    {
+      return patternValue.ToString();
+    }
+    return Value.ToString();
+
   }
 
 }

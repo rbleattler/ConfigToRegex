@@ -12,8 +12,8 @@ namespace RegexRules;
 
 public class CharacterClassPattern : ICharacterClass
 {
+    private PatternValue _value = new PatternValue(string.Empty);
     private string _type = "CharacterClass";
-    private PatternValue _value;
 
     string? IPattern.Id { get => Id; set => Id = value; }
     IPatternValue IPattern.Value
@@ -119,7 +119,14 @@ public class CharacterClassPattern : ICharacterClass
     {
         if (CharacterClassPatternObject.StartsWith("\\"))
         {
-            Value = new PatternValue(CharacterClassPatternObject);
+            if (IsValidCharacterClassType(CharacterClassPatternObject))
+            {
+                Value = new PatternValue(CharacterClassPatternObject);
+            }
+            else if (IsValidCharacterClass(CharacterClassPatternObject))
+            {
+                Value = new PatternValue(GetCharacterClass(CharacterClassPatternObject));
+            }
         }
         else if (string.IsNullOrWhiteSpace(CharacterClassPatternObject))
         {
@@ -133,9 +140,13 @@ public class CharacterClassPattern : ICharacterClass
         {
             DeserializeYaml(CharacterClassPatternObject);
         }
+        else
+        {
+            throw new ArgumentException("Invalid CharacterClass Type (" + CharacterClassPatternObject + ") Valid types are: " + string.Join(", ", GetValidCharacterClassTypes()));
+        }
     }
 
-    public override string? ToString() => Value?.ToString() ?? string.Empty;
+    public override string? ToString() => Value!.ToString() ?? string.Empty;
 
     internal bool IsJson(string patternObject) => ((IPattern)this).IsJson(patternObject);
 
@@ -143,26 +154,62 @@ public class CharacterClassPattern : ICharacterClass
 
     internal void DeserializeYaml(string patternObject)
     {
-        var deserializer = new Deserializer();
-        var pattern = deserializer.Deserialize<Pattern>(patternObject);
-        if (pattern != null)
+        dynamic? pattern;
+        if (patternObject != null)
         {
-            Id = pattern.Id ?? Guid.NewGuid().ToString();
-            Type = pattern.Type ?? "Literal";
-            Value = pattern.Value ?? new PatternValue(string.Empty);
-            Quantifiers = pattern.Quantifiers ?? null;
+            try
+            {
+                pattern = new Deserializer().Deserialize(patternObject, typeof(CharacterClassPattern)); //Deserialize<CharacterClassPattern>(patternObject);
+            }
+            catch
+            {
+                try
+                {
+                    pattern = new Deserializer().Deserialize<object>(patternObject) as CharacterClassPattern;
+                }
+                catch
+                {
+                    throw new ArgumentException("Invalid Yaml");
+                }
+            }
+
+            if (pattern != null)
+            {
+                Id = pattern.Id ?? Guid.NewGuid().ToString();
+                Type = pattern!.Type ?? "Literal";
+                Value = pattern!.Value ?? new PatternValue(string.Empty);
+                Quantifiers = pattern!.Quantifiers ?? null;
+            }
         }
+        // var pattern = new Deserializer().Deserialize<CharacterClassPattern>(patternObject);
+        // if (pattern != null)
+        // {
+        //     Id = pattern.Id ?? Guid.NewGuid().ToString();
+        //     Type = pattern.Type ?? "Literal";
+        //     Value = pattern.Value ?? new PatternValue(string.Empty);
+        //     Quantifiers = pattern.Quantifiers ?? null;
+        // }
     }
 
     internal void DeserializeJson(string patternObject)
     {
-        var pattern = JsonSerializer.Deserialize<Pattern>(patternObject);
+        CharacterClassPattern? pattern;
+        var basicObject = JsonSerializer.Deserialize<object>(patternObject);
+        try
+        {
+            pattern = basicObject as CharacterClassPattern;
+        }
+        catch
+        {
+            throw new ArgumentException("Invalid Json");
+        }
+        // This may be dumb, but it works
         if (pattern != null)
         {
             Id = pattern.Id;
             Type = pattern.Type;
-            Value = (PatternValue)pattern.Value;
-            Quantifiers = (Quantifier?)pattern.Quantifiers;
+            Value = pattern.Value;
+            Quantifiers = pattern.Quantifiers;
         }
     }
 
@@ -170,18 +217,29 @@ public class CharacterClassPattern : ICharacterClass
     {
         // get the value of the appropriate CharacterClass from the static class CharacterClasses in FluentRegex
         string CharacterClass = default!;
-        typeof(CharacterClasses).GetFields().ToList().ForEach(f =>
+        var validTypes = GetValidCharacterClassTypes();
+        if (validTypes.Contains(value))
         {
-            if (f.Name.ToLower() == value.ToLower())
+            CharacterClass = (string)typeof(CharacterClasses).GetField(value)!.GetValue(null)!;
+        }
+        if (string.IsNullOrWhiteSpace(CharacterClass))
+        {
+            var validValues = GetValidCharacterClassValues();
+            if (validValues.Contains(value))
             {
-                CharacterClass = (string)f.GetValue(null)!;
+                CharacterClass = value;
             }
-        });
-        if (CharacterClass == default)
+        }
+        if (string.IsNullOrWhiteSpace(CharacterClass))
         {
             throw new ArgumentException("Invalid CharacterClass Type. Valid types are: " + string.Join(", ", GetValidCharacterClassTypes()));
         }
-        return CharacterClass;
+        return CharacterClass ?? string.Empty;
+    }
+
+    private static List<string?> GetValidCharacterClassValues()
+    {
+        return typeof(CharacterClasses).GetFields().Select(f => f.GetValue(null)!.ToString()).ToList()!;
     }
 
     internal static bool IsValidCharacterClass(string literal)
