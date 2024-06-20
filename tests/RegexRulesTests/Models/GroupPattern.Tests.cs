@@ -56,16 +56,16 @@ public class GroupPatternTests : RegexRuleTestCore
     [Fact]
     public void GroupPattern_ConstructorWithYamlPattern_DeserializesPattern()
     {
-        // Arrange
-        var yamlPattern = ReadFileAsString(AllYamlTestFiles[1]); // Replace with a valid YAML pattern
+        // Get the test file 2
+        var testFile = AllYamlTestFiles!.Where(f => f.EndsWith("2.yml")).FirstOrDefault();
+        var yamlPattern = ReadFileAsString(testFile!);
 
         // Act
         var groupPattern = new GroupPattern(yamlPattern);
 
         // Assert
-
+        Assert.Equal(2, groupPattern.Patterns.Count);
         Assert.Equal("Testing Group Pattern", groupPattern.Message);
-        Assert.Single(groupPattern.Patterns);
         Assert.Equal("AngleBrackets", groupPattern.Properties.NamedGroupStyle);
         Assert.Equal("testGroup0Name", groupPattern.Properties.Name);
         Assert.Equal("Named", groupPattern.Properties.GroupType);
