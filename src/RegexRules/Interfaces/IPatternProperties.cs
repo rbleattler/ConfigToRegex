@@ -8,19 +8,10 @@ namespace RegexRules;
 
 public interface IPatternProperties
 {
-  [JsonPropertyName("Name")]
-  [YamlMember(Alias = "Name")]
   public string? Name { get; set; }
 
-  [JsonPropertyName("GroupType")]
-  [YamlMember(Alias = "GroupType")]
-  [JsonConverter(typeof(JsonStringEnumConverter))]
-  [AllowedValues("NonCapturing", "Capturing", "Named")]
   public string? GroupType { get; set; }
 
-  [JsonPropertyName("NamedGroupStyle")]
-  [YamlMember(Alias = "NamedGroupStyle")]
-  [AllowedValues("SingleQuote", "AngleBrackets", "PStyle")]
   public string? NamedGroupStyle { get; set; }
 
   public bool IsJson(string patternPropertiesObject)
