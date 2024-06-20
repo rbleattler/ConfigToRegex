@@ -16,4 +16,6 @@ public interface IRegexSerializable
 
     IRegexSerializable DeserializeJson(string jsonString);
 
+    string ToRegex();
+
 }
