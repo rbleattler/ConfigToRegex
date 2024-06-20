@@ -13,6 +13,7 @@ namespace RegexRules;
 public class CharacterClassPattern : ICharacterClass
 {
     private string _type = "CharacterClass";
+    private PatternValue _value;
 
     string? IPattern.Id { get => Id; set => Id = value; }
     IPatternValue IPattern.Value
@@ -20,6 +21,7 @@ public class CharacterClassPattern : ICharacterClass
         get => Value;
         set => Value = (PatternValue)value;
     }
+
     IQuantifier? IPattern.Quantifiers
     {
         get => Quantifiers;
@@ -50,21 +52,32 @@ public class CharacterClassPattern : ICharacterClass
     {
         get
         {
-            return Value;
+            return _value;
         }
         set
         {
-            var isValid = IsValidCharacterClassType(value);
+            var isValid = IsValidCharacterClassType(value) || IsValidCharacterClass(value);
             if (isValid == false)
             {
-                var validTypes = GetValidCharacterClassTypes();
-                throw new ArgumentException("Invalid CharacterClass Type. Valid types are: " + string.Join(", ", validTypes));
+                throw new ArgumentException("Invalid CharacterClass.\n"
+                                            + "Valid types are: "
+                                            + string.Join(", ", GetValidCharacterClassTypes())
+                                            + "\n"
+                                            + "Valid CharacterClass literals are: "
+                                            + string.Join(", ", GetValidCharacterClassLiterals()));
             }
             else
             {
                 // Get the value of
-                var stringValue = GetCharacterClass(value);
-                new PatternValue(stringValue!);
+                if (IsValidCharacterClass(value))
+                {
+                    _value = new PatternValue(value);
+                }
+                else
+                {
+                    var stringValue = GetCharacterClass(value);
+                    _value = new PatternValue(stringValue!);
+                }
             }
         }
     }
@@ -104,11 +117,15 @@ public class CharacterClassPattern : ICharacterClass
 
     public CharacterClassPattern(string CharacterClassPatternObject)
     {
-        if (string.IsNullOrWhiteSpace(CharacterClassPatternObject))
+        if (CharacterClassPatternObject.StartsWith("\\"))
+        {
+            Value = new PatternValue(CharacterClassPatternObject);
+        }
+        else if (string.IsNullOrWhiteSpace(CharacterClassPatternObject))
         {
             Value = new PatternValue(string.Empty);
         }
-        if (IsJson(CharacterClassPatternObject))
+        else if (IsJson(CharacterClassPatternObject))
         {
             DeserializeJson(CharacterClassPatternObject);
         }
@@ -118,7 +135,7 @@ public class CharacterClassPattern : ICharacterClass
         }
     }
 
-    public override string? ToString() => Value.ToString() ?? string.Empty;
+    public override string? ToString() => Value?.ToString() ?? string.Empty;
 
     internal bool IsJson(string patternObject) => ((IPattern)this).IsJson(patternObject);
 
@@ -139,7 +156,7 @@ public class CharacterClassPattern : ICharacterClass
 
     internal void DeserializeJson(string patternObject)
     {
-        var pattern = JsonSerializer.Deserialize<IPattern>(patternObject);
+        var pattern = JsonSerializer.Deserialize<Pattern>(patternObject);
         if (pattern != null)
         {
             Id = pattern.Id;
@@ -165,6 +182,16 @@ public class CharacterClassPattern : ICharacterClass
             throw new ArgumentException("Invalid CharacterClass Type. Valid types are: " + string.Join(", ", GetValidCharacterClassTypes()));
         }
         return CharacterClass;
+    }
+
+    internal static bool IsValidCharacterClass(string literal)
+    {
+        return GetValidCharacterClassLiterals().Contains(literal);
+    }
+
+    private static List<string?> GetValidCharacterClassLiterals()
+    {
+        return typeof(CharacterClasses).GetFields().Select(f => f.GetValue(null))!.ToList<object>().ConvertAll<string?>(x => x?.ToString())!;
     }
 
     internal static bool IsValidCharacterClassType(string type)
