@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace RegexRules;
 
-public interface IPattern
+public interface IPattern : IRegexSerializable
 {
   public string? Message { get; set; }
 

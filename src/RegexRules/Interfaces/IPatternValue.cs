@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace RegexRules;
 
-public interface IPatternValue
+public interface IPatternValue : IRegexSerializable
 {
 
   public dynamic Value { get; set; }

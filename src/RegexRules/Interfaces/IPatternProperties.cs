@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace RegexRules;
 
-public interface IPatternProperties
+public interface IPatternProperties : IRegexSerializable
 {
   public string? Name { get; set; }
 

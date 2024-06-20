@@ -6,7 +6,7 @@ using NJsonSchema;
 
 namespace RegexRules;
 
-public interface ICharacterClass : IPattern
+public interface ICharacterClass : IPattern, IRegexSerializable
 {
     string? IPattern.Id
     {
