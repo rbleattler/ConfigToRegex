@@ -5,6 +5,7 @@ using YamlDotNet.Serialization;
 using NJsonSchema;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace RegexRules;
 
@@ -177,8 +178,26 @@ public class Pattern : IPattern
 
   public string ToRegex()
   {
-    //TODO: Implement Pattern.ToRegex()
-    throw new NotImplementedException();
+    StringBuilder regex = new();
+    if (null != Value && !string.IsNullOrEmpty(Value.ToString()))
+    {
+      if (Type == "Literal")
+      {
+        regex.Append(Value.ToString());
+      }
+
+    }
+
+    if (null != Value && !string.IsNullOrEmpty(Value.ToRegex()) && (Type == "Anchor" || Type == "CharacterClass" || Type == "Group"))
+    {
+      regex.Append(Value.ToRegex());
+    }
+
+    if (Quantifiers != null)
+    {
+      regex.Append(Quantifiers.ToRegex());
+    }
+    return regex.ToString();
   }
 
 }
