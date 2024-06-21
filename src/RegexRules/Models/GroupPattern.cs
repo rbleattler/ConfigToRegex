@@ -1,3 +1,4 @@
+using FluentRegex;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
@@ -126,18 +127,18 @@ public class GroupPattern : IGroup
 
   }
 
-    public string SerializeYaml()
-    {
-        var serializer = new SerializerBuilder().Build();
-        var yaml = serializer.Serialize(this);
-        return yaml;
-    }
+  public string SerializeYaml()
+  {
+    var serializer = new SerializerBuilder().Build();
+    var yaml = serializer.Serialize(this);
+    return yaml;
+  }
 
-    public string SerializeJson()
-    {
-        var json = JsonSerializer.Serialize(this);
-        return json;
-    }
+  public string SerializeJson()
+  {
+    var json = JsonSerializer.Serialize(this);
+    return json;
+  }
 
   void IRegexSerializable.DeserializeYaml(string yamlString)
   {
@@ -151,7 +152,29 @@ public class GroupPattern : IGroup
 
   public string ToRegex()
   {
-    //TODO: Implement GroupPattern.ToRegex()
-    throw new NotImplementedException();
+    // Use FluentRegex to build the regex pattern
+    GroupBuilder regex;
+    var groupType = (GroupType)Enum.Parse(typeof(GroupType), Properties.GroupType!);
+    if (Properties.GroupType != "Named")
+    {
+      // Get FluentRegex.GroupType from Properties.GroupType
+      regex = new GroupBuilder(new PatternBuilder(), groupType);
+    }
+    else
+    {
+      regex = new GroupBuilder(new PatternBuilder(), groupType);
+    }
+    foreach (var pattern in Patterns)
+    {
+      if (pattern.Type == "CharacterClass" || pattern.Type == "Anchor")
+      {
+        regex.AppendLiteral(pattern.ToRegex());
+      }
+    }
+    if (Quantifiers != null)
+    {
+      regex.AppendLiteral(Quantifiers.ToRegex());
+    }
+    return regex.ToString();
   }
 }
