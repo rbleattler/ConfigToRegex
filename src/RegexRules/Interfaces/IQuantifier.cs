@@ -27,6 +27,4 @@ public interface IQuantifier : IRegexSerializable
   [YamlMember(Alias = "Greedy", Description = "Whether the quantifier is greedy.")]
   public bool? Greedy { get; set; }
 
-  public string ToRegex(string pattern);
-
 }
