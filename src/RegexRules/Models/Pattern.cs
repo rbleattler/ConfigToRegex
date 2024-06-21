@@ -154,14 +154,15 @@ public class Pattern : IPattern
 
   public string SerializeYaml()
   {
-    //TODO: Implement Pattern.SerializeYaml()
-    throw new NotImplementedException();
+    var serializer = new SerializerBuilder().Build();
+    var yaml = serializer.Serialize(this);
+    return yaml;
   }
 
   public string SerializeJson()
   {
-    //TODO: Implement Pattern.SerializeJson()
-    throw new NotImplementedException();
+    var json = JsonSerializer.Serialize(this);
+    return json;
   }
 
   void IRegexSerializable.DeserializeYaml(string yamlString)

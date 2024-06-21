@@ -186,14 +186,15 @@ public class AnchorPattern : IAnchor
 
     public string SerializeYaml()
     {
-        //TODO: Implement AnchorPattern.SerializeYaml()
-        throw new NotImplementedException();
+        var serializer = new SerializerBuilder().Build();
+        var yaml = serializer.Serialize(this);
+        return yaml;
     }
 
     public string SerializeJson()
     {
-        //TODO: Implement AnchorPattern.SerializeJson()
-        throw new NotImplementedException();
+        var json = JsonSerializer.Serialize(this);
+        return json;
     }
 
     void IRegexSerializable.DeserializeYaml(string yamlString)
@@ -208,7 +209,7 @@ public class AnchorPattern : IAnchor
 
     public string ToRegex()
     {
-        //TODO: Implement AnchorPattern.ToRegex()
-        throw new NotImplementedException();
+        // Get the literal value of the anchor (e.g. "^" for StartOfLine)
+        return GetAnchor(Value);
     }
 }

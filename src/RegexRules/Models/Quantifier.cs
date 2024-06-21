@@ -74,25 +74,58 @@ public class Quantifier : IQuantifier
     }
   }
 
-
   public string SerializeYaml()
   {
-    //TODO: Implement Quantifier.SerializeYaml
-    throw new NotImplementedException();
+    var serializer = new SerializerBuilder().Build();
+    var yaml = serializer.Serialize(this);
+    return yaml;
   }
 
   public string SerializeJson()
   {
-    //TODO: Implement Quantifier.SerializeJson
-    throw new NotImplementedException();
+    var json = JsonSerializer.Serialize(this);
+    return json;
   }
+
+  public void DeserializeYaml(string yamlString)
+  {
+    var deserializer = new Deserializer();
+    var pattern = deserializer.Deserialize<Quantifier>(yamlString);
+    if (pattern != null)
+    {
+      Min = pattern.Min ?? null;
+      Max = pattern.Max ?? null;
+      Exactly = pattern.Exactly ?? null;
+      Lazy = pattern.Lazy ?? null;
+      Greedy = pattern.Greedy ?? null;
+    }
+  }
+
+  public void DeserializeJson(string jsonString)
+  {
+    var pattern = JsonSerializer.Deserialize<Quantifier>(jsonString) ?? throw new Exception("Invalid JSON");
+
+    if (pattern != null)
+    {
+      Min = pattern.Min ?? null;
+      Max = pattern.Max ?? null;
+      Exactly = pattern.Exactly ?? null;
+      Lazy = pattern.Lazy ?? null;
+      Greedy = pattern.Greedy ?? null;
+    }
+
+  }
+
 
   void IRegexSerializable.DeserializeJson(string jsonString)
   {
-    //TODO: Implement Quantifier.DeserializeJson
-    throw new NotImplementedException();
+    DeserializeJson(jsonString);
   }
 
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    DeserializeYaml(yamlString);
+  }
   public string ToRegex(string pattern = "")
   {
     // This takes the pattern as a parameter so that we can avoid invalid regex (I.E. **)
@@ -153,13 +186,8 @@ public class Quantifier : IQuantifier
 
   string IRegexSerializable.ToRegex()
   {
-    return ToRegex("");
+    return ToRegex();
   }
 
-  void IRegexSerializable.DeserializeYaml(string yamlString)
-  {
-    //TODO: Implement Quantifier.DeserializeYaml
-    throw new NotImplementedException();
-  }
 
 }

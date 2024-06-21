@@ -11,7 +11,7 @@ namespace RegexRules;
 
 [YamlSerializable]
 
-public class PatternValue : IPatternValue
+public class PatternValue : IPatternValue, IRegexSerializable
 {
 
   [JsonPropertyName("Value")]
@@ -81,31 +81,50 @@ public class PatternValue : IPatternValue
 
   public string SerializeYaml()
   {
-    //TODO: Implement PatternValue.SerializeYaml
-    throw new NotImplementedException();
+    var serializer = new SerializerBuilder().Build();
+    var yaml = serializer.Serialize(this);
+    return yaml;
   }
 
   public string SerializeJson()
   {
-    //TODO: Implement PatternValue.SerializeJson
-    throw new NotImplementedException();
+    var json = JsonSerializer.Serialize(this);
+    return json;
+  }
+
+  public void DeserializeYaml(string yamlString)
+  {
+    var deserializer = new Deserializer();
+    var pattern = deserializer.Deserialize<PatternValue>(yamlString);
+    if (pattern != null)
+    {
+      Value = pattern.Value ?? string.Empty;
+    }
+  }
+
+  public void DeserializeJson(string jsonString)
+  {
+    var pattern = JsonSerializer.Deserialize<PatternValue>(jsonString) ?? throw new Exception("Invalid JSON");
+
+    if (pattern != null)
+    {
+      Value = pattern.Value ?? string.Empty;
+    }
   }
 
   void IRegexSerializable.DeserializeJson(string jsonString)
   {
-    //TODO: Implement PatternValue.DeserializeJson
-    throw new NotImplementedException();
+    DeserializeJson(jsonString);
+  }
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    DeserializeYaml(yamlString);
   }
 
   public string ToRegex()
   {
     //TODO: Implement PatternValue.ToRegex
-    throw new NotImplementedException();
-  }
-
-  void IRegexSerializable.DeserializeYaml(string yamlString)
-  {
-    //TODO: Implement PatternValue.DeserializeYaml
     throw new NotImplementedException();
   }
 }

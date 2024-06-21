@@ -126,17 +126,18 @@ public class GroupPattern : IGroup
 
   }
 
-  public string SerializeYaml()
-  {
-    //TODO: Implement GroupPattern.SerializeYaml()
-    throw new NotImplementedException();
-  }
+    public string SerializeYaml()
+    {
+        var serializer = new SerializerBuilder().Build();
+        var yaml = serializer.Serialize(this);
+        return yaml;
+    }
 
-  public string SerializeJson()
-  {
-    //TODO: Implement GroupPattern.SerializeJson()
-    throw new NotImplementedException();
-  }
+    public string SerializeJson()
+    {
+        var json = JsonSerializer.Serialize(this);
+        return json;
+    }
 
   void IRegexSerializable.DeserializeYaml(string yamlString)
   {

@@ -50,20 +50,37 @@ public class PatternProperties : IPatternProperties
 
   public string SerializeYaml()
   {
-    //TODO: Implement PatternProperties.SerializeYaml
-    throw new NotImplementedException();
+    var serializer = new SerializerBuilder().Build();
+    var yaml = serializer.Serialize(this);
+    return yaml;
   }
 
   public string SerializeJson()
   {
-    //TODO: Implement PatternProperties.SerializeJson
-    throw new NotImplementedException();
+    var json = JsonSerializer.Serialize(this);
+    return json;
   }
 
-  void IRegexSerializable.DeserializeJson(string jsonString)
+  public void DeserializeYaml(string yamlString)
   {
-    //TODO: Implement PatternProperties.DeserializeJson
-    throw new NotImplementedException();
+    var deserializer = new Deserializer();
+    var pattern = deserializer.Deserialize<PatternProperties>(yamlString);
+    if (pattern != null)
+    {
+      Name = pattern.Name ?? string.Empty;
+      GroupType = pattern.GroupType ?? default;
+      NamedGroupStyle = pattern.NamedGroupStyle ?? default;
+    }
+  }
+
+  public void DeserializeJson(string jsonString)
+  {
+    var pattern = JsonSerializer.Deserialize<PatternProperties>(jsonString) ?? throw new Exception("Invalid JSON");
+
+    Name = pattern.Name ?? string.Empty;
+    GroupType = pattern.GroupType ?? string.Empty;
+    NamedGroupStyle = pattern.NamedGroupStyle ?? string.Empty;
+
   }
 
   public string ToRegex()
@@ -71,10 +88,14 @@ public class PatternProperties : IPatternProperties
     //TODO: Implement PatternProperties.ToRegex
     throw new NotImplementedException();
   }
+  void IRegexSerializable.DeserializeJson(string jsonString)
+  {
+    DeserializeJson(jsonString);
+  }
+
 
   void IRegexSerializable.DeserializeYaml(string yamlString)
   {
-    //TODO: Implement PatternProperties.DeserializeYaml
-    throw new NotImplementedException();
+    DeserializeYaml(yamlString);
   }
 }
