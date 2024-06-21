@@ -1,10 +1,8 @@
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
 using FluentRegex;
 using System.Text.Json;
 using NJsonSchema;
-using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RegexRulesTests")]
@@ -305,7 +303,11 @@ public class CharacterClassPattern : ICharacterClass
 
     public string ToRegex()
     {
-        //TODO: Implement CharacterClassPattern.ToRegex
-        throw new NotImplementedException();
+        var regex = Value.ToString();
+        if (Quantifiers != null)
+        {
+            regex += Quantifiers.ToRegex();
+        }
+        return regex!;
     }
 }
