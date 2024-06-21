@@ -26,30 +26,4 @@ public interface ICharacterClass : IPattern, IRegexSerializable
     [YamlIgnore]
     JsonSchema IPattern.JsonSchema => JsonSchema.FromType(GetType());
 
-
-    private void DeserializeYaml(string characterClassObjectPattern)
-    {
-        var deserializer = new Deserializer();
-        var pattern = deserializer.Deserialize<CharacterClassPattern>(characterClassObjectPattern) ?? throw new Exception("Invalid YAML");
-
-        Id = pattern.Id;
-        Message = pattern.Message;
-        Type = pattern.Type;
-        Value = pattern.Value;
-        Properties = pattern.Properties;
-        Quantifiers = pattern.Quantifiers;
-    }
-
-    private void DeserializeJson(string characterClassObjectPattern)
-    {
-        var pattern = JsonSerializer.Deserialize<CharacterClassPattern>(characterClassObjectPattern) ?? throw new Exception("Invalid JSON");
-
-        Id = pattern.Id;
-        Message = pattern.Message;
-        Type = pattern.Type;
-        Value = pattern.Value;
-        Properties = pattern.Properties;
-        Quantifiers = pattern.Quantifiers;
-    }
-
 }
