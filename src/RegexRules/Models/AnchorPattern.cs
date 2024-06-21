@@ -11,12 +11,14 @@ namespace RegexRules;
 public class AnchorPattern : IAnchor
 {
     private string _type = "Anchor";
+    private PatternValue _value = new PatternValue(string.Empty);
 
     string? IPattern.Id { get => Id; set => Id = value; }
+
     IPatternValue IPattern.Value
     {
-        get => Value;
-        set => Value = (PatternValue)value;
+        get => _value;
+        set => _value = (PatternValue)value;
     }
     IQuantifier? IPattern.Quantifiers
     {
@@ -48,7 +50,7 @@ public class AnchorPattern : IAnchor
     {
         get
         {
-            return Value;
+            return _value;
         }
         set
         {
@@ -56,7 +58,7 @@ public class AnchorPattern : IAnchor
             if (isValid == false)
             {
                 var validTypes = GetValidAnchorTypes();
-                throw new ArgumentException("Invalid Anchor Type. Valid types are: " + string.Join(", ", validTypes));
+                throw new ArgumentException("Invalid Anchor Type (" + value + "). Valid types are: " + string.Join(", ", validTypes));
             }
             else
             {
@@ -125,29 +127,48 @@ public class AnchorPattern : IAnchor
 
     private bool IsYaml(string patternObject) => ((IPattern)this).IsYaml(patternObject);
 
-    private void DeserializeYaml(string patternObject)
+    public void DeserializeYaml(string patternObject)
     {
+        dynamic? pattern = null;
         var deserializer = new Deserializer();
-        var pattern = deserializer.Deserialize<Pattern>(patternObject);
+        if (null != patternObject && !string.IsNullOrWhiteSpace(patternObject))
+            try
+            {
+                pattern = deserializer.Deserialize<AnchorPattern>(patternObject);
+            }
+            catch
+            {
+                try
+                {
+                    pattern = deserializer.Deserialize<object>(patternObject) as AnchorPattern;
+                }
+                catch
+                {
+                    throw new ArgumentException("Unable to deserialize YAML string:\n" + patternObject);
+                }
+            }
+
         if (pattern != null)
         {
             Id = pattern.Id ?? Guid.NewGuid().ToString();
+            Message = pattern.Message ?? string.Empty;
             Type = pattern.Type ?? "Literal";
+            Properties = pattern.Properties ?? null;
             Value = pattern.Value ?? new PatternValue(string.Empty);
             Quantifiers = pattern.Quantifiers ?? null;
         }
     }
 
-    private void DeserializeJson(string patternObject)
+    public void DeserializeJson(string anchorObjectPattern)
     {
-        var pattern = JsonSerializer.Deserialize<IPattern>(patternObject);
-        if (pattern != null)
-        {
-            Id = pattern.Id;
-            Type = pattern.Type;
-            Value = (PatternValue)pattern.Value;
-            Quantifiers = (Quantifier?)pattern.Quantifiers;
-        }
+        var pattern = JsonSerializer.Deserialize<AnchorPattern>(anchorObjectPattern) ?? throw new Exception("Invalid JSON");
+
+        Id = pattern.Id;
+        Message = pattern.Message;
+        Type = pattern.Type;
+        Value = pattern.Value;
+        Properties = pattern.Properties;
+        Quantifiers = pattern.Quantifiers;
     }
 
     private static string GetAnchor(string value)
@@ -163,7 +184,7 @@ public class AnchorPattern : IAnchor
         });
         if (anchor == default)
         {
-            throw new ArgumentException("Invalid Anchor Type. Valid types are: " + string.Join(", ", GetValidAnchorTypes()));
+            throw new ArgumentException("Invalid Anchor Type. ("+ value +") Valid types are: " + string.Join(", ", GetValidAnchorTypes()));
         }
         return anchor;
     }
@@ -209,7 +230,6 @@ public class AnchorPattern : IAnchor
 
     public string ToRegex()
     {
-        // Get the literal value of the anchor (e.g. "^" for StartOfLine)
-        return GetAnchor(Value);
+        return Value.ToRegex();
     }
 }
