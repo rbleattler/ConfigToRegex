@@ -83,19 +83,4 @@ public class PatternProperties : IPatternProperties
 
   }
 
-  public string ToRegex()
-  {
-    //TODO: Implement PatternProperties.ToRegex
-    throw new NotImplementedException();
-  }
-  void IRegexSerializable.DeserializeJson(string jsonString)
-  {
-    DeserializeJson(jsonString);
-  }
-
-
-  void IRegexSerializable.DeserializeYaml(string yamlString)
-  {
-    DeserializeYaml(yamlString);
-  }
 }
