@@ -124,7 +124,10 @@ public class PatternValue : IPatternValue, IRegexSerializable
 
   public string ToRegex()
   {
-    //TODO: Implement PatternValue.ToRegex
-    throw new NotImplementedException();
+    if (Value is PatternValue patternValue)
+    {
+      return patternValue.ToRegex();
+    }
+    return Value.ToString();
   }
 }
