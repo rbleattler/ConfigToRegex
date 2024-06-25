@@ -1,6 +1,4 @@
-using Xunit;
 using RegexRules;
-using System;
 using System.Runtime.Serialization;
 
 namespace RegexRulesTests;

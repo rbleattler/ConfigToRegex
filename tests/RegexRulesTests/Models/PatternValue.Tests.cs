@@ -1,4 +1,3 @@
-using Xunit;
 using RegexRules;
 
 namespace RegexRulesTests;
@@ -59,40 +58,40 @@ public class PatternValueTests : RegexRuleTestCore
   [Fact]
   public void ToRegex_WhenValueIsPatternValue_ReturnsExpectedResult()
   {
-    // Arrange
+
     var innerPatternValue = new PatternValue("inner value");
     var patternValue = new PatternValue(innerPatternValue);
 
-    // Act
+
     var result = patternValue.ToRegex();
 
-    // Assert
+
     Assert.Equal("inner value", result);
   }
 
   [Fact]
   public void ToRegex_WhenValueIsString_ReturnsExpectedResult()
   {
-    // Arrange
+
     var patternValue = new PatternValue("test value");
 
-    // Act
+
     var result = patternValue.ToRegex();
 
-    // Assert
+
     Assert.Equal("test value", result);
   }
 
   [Fact]
   public void ToRegex_WhenValueIsNull_ReturnsExpectedResult()
   {
-    // Arrange
+
     var patternValue = new PatternValue(string.Empty);
 
-    // Act
+
     var result = patternValue.ToRegex();
 
-    // Assert
+
     Assert.Equal(string.Empty, result);
   }
 }

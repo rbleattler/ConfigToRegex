@@ -1,9 +1,7 @@
-using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
 using NJsonSchema;
 using NJsonSchema.Annotations;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace RegexRules;

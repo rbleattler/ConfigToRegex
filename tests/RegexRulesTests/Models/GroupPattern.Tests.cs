@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using RegexRules;
 
 namespace RegexRulesTests;
@@ -23,13 +22,13 @@ public class GroupPatternTests : RegexRuleTestCore
     [Fact]
     public void GroupPattern_DefaultConstructor_CreatesEmptyPatternsList()
     {
-        // Arrange
+
         var groupPattern = new GroupPattern();
 
-        // Act
+
         var result = groupPattern.Patterns;
 
-        // Assert
+
         Assert.NotNull(result);
         Assert.Empty(result);
     }
@@ -37,13 +36,13 @@ public class GroupPatternTests : RegexRuleTestCore
     [Fact]
     public void GroupPattern_ConstructorWithJsonPattern_DeserializesPattern()
     {
-        // Arrange
+
         var jsonPattern = ReadFileAsString(AllJsonTestFiles[0]); // Replace with a valid JSON pattern
 
-        // Act
+
         var groupPattern = new GroupPattern(jsonPattern);
 
-        // Assert
+
         // Replace 'expected' with the expected values
 
         Assert.Equal("Testing Group Pattern", groupPattern.Message);
@@ -60,10 +59,10 @@ public class GroupPatternTests : RegexRuleTestCore
         var testFile = AllYamlTestFiles!.Where(f => f.EndsWith("2.yml")).FirstOrDefault();
         var yamlPattern = ReadFileAsString(testFile!);
 
-        // Act
+
         var groupPattern = new GroupPattern(yamlPattern);
 
-        // Assert
+
         Assert.Equal(2, groupPattern.Patterns.Count);
         Assert.Equal("Testing Group Pattern", groupPattern.Message);
         Assert.Equal("AngleBrackets", groupPattern.Properties.NamedGroupStyle);

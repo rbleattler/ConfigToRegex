@@ -1,9 +1,7 @@
-using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
 using NJsonSchema;
-using NJsonSchema.Yaml;
 using System.Text.RegularExpressions;
 
 
@@ -63,7 +61,7 @@ public class PatternValue : IPatternValue, IRegexSerializable
 
   public PatternValue()
   {
-    Value = string.Empty;
+    // Value = string.Empty;
   }
 
 
