@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
 using NJsonSchema;
@@ -31,30 +29,30 @@ public interface IGroup : IPattern, IRegexSerializable
   [YamlIgnore]
   JsonSchema IPattern.JsonSchema => JsonSchema.FromType(GetType());
 
-  private void DeserializeYaml(string groupObjectPattern)
-  {
-    var deserializer = new Deserializer();
-    var pattern = deserializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new Exception("Invalid YAML");
+  // private void DeserializeYaml(string groupObjectPattern)
+  // {
+  //   var deserializer = new Deserializer();
+  //   var pattern = deserializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new Exception("Invalid YAML");
 
-    Id = pattern.Id;
-    Message = pattern.Message;
-    Position = pattern.Position;
-    Patterns = pattern.Patterns;
-    Properties = pattern.Properties;
-    Quantifiers = pattern.Quantifiers;
-  }
+  //   Id = pattern.Id;
+  //   Message = pattern.Message;
+  //   Position = pattern.Position;
+  //   Patterns = pattern.Patterns;
+  //   Properties = pattern.Properties;
+  //   Quantifiers = pattern.Quantifiers;
+  // }
 
-  private void DeserializeJson(string groupObjectPattern)
-  {
-    var pattern = JsonSerializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new Exception("Invalid JSON");
+  // private void DeserializeJson(string groupObjectPattern)
+  // {
+  //   var pattern = JsonSerializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new Exception("Invalid JSON");
 
-    Id = pattern.Id;
-    Message = pattern.Message;
-    Position = pattern.Position;
-    Patterns = pattern.Patterns;
-    Properties = pattern.Properties;
-    Quantifiers = pattern.Quantifiers;
+  //   Id = pattern.Id;
+  //   Message = pattern.Message;
+  //   Position = pattern.Position;
+  //   Patterns = pattern.Patterns;
+  //   Properties = pattern.Properties;
+  //   Quantifiers = pattern.Quantifiers;
 
-  }
+  // }
 
 }
