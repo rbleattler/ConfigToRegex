@@ -8,6 +8,9 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("RegexRulesTests")]
 namespace RegexRules;
 
+//TODO: Custom CharacterClasses (I.E. [afv], [cC-rR], etc... basically building a custom character class)
+
+
 public class CharacterClassPattern : ICharacterClass
 {
     private PatternValue _value = new(string.Empty);
@@ -110,7 +113,7 @@ public class CharacterClassPattern : ICharacterClass
 
     public CharacterClassPattern()
     {
-        Value = new PatternValue(string.Empty);
+        // Value = new PatternValue(string.Empty);
     }
 
     public CharacterClassPattern(string CharacterClassPatternObject)
@@ -164,7 +167,10 @@ public class CharacterClassPattern : ICharacterClass
             {
                 pattern = new Deserializer().Deserialize(patternObject, typeof(CharacterClassPattern)); //Deserialize<CharacterClassPattern>(patternObject);
             }
-            catch
+            catch {
+                pattern = null;
+            }
+            if (pattern == null)
             {
                 try
                 {
@@ -278,7 +284,7 @@ public class CharacterClassPattern : ICharacterClass
         return type == "Literal" || type == "CharacterClass" || type == "CharacterClass" || type == "Group";
     }
 
-        public string SerializeYaml()
+    public string SerializeYaml()
     {
         var serializer = new SerializerBuilder().Build();
         var yaml = serializer.Serialize(this);

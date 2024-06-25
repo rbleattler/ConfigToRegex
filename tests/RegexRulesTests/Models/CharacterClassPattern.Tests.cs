@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using FluentRegex;
 using RegexRules;
@@ -96,6 +95,19 @@ public class CharacterClassPatternTests : RegexRuleTestCore
     {
         Assert.Equal(CharacterClasses.Digit, CharacterClassPattern.GetCharacterClass("Digit"));
         Assert.Throws<ArgumentException>(() => CharacterClassPattern.GetCharacterClass("Invalid"));
+    }
+
+    [Fact]
+    public void ToRegex_ShouldReturnCorrectCharacterClass()
+    {
+        var patternObject = ReadFileAsString(AllTestFiles[0]);
+
+        var characterClassPattern = new CharacterClassPattern(patternObject);
+
+        var result = characterClassPattern.ToRegex();
+
+
+        Assert.Equal("\\d", result);
     }
 
 }
