@@ -1,3 +1,5 @@
+using System;
+using FluentRegex;
 using ConfigToRegex;
 
 namespace ConfigToRegexTests;
@@ -73,22 +75,22 @@ public class GroupPatternTests : RegexRuleTestCore
     // ToRegex:
 
     //TODO: EmptyGroupPattern
-    [Fact(Skip = "TODO: Implement this test")]
-    public void ToRegex_EmptyGroupPattern_ReturnsEmptyPattern()
+    [Fact]
+    public void ToRegex_EmptyGroupPattern_ThrowsException()
     {
         var groupPattern = new GroupPattern();
-        var expected = ""; // Assuming an empty group returns an empty string
-        Assert.Equal(expected, groupPattern.ToRegex());
+        Assert.Throws<ArgumentNullException>(() => groupPattern.ToRegex());
     }
 
     //TODO: SimplePatterns
-    [Fact(Skip = "TODO: Implement this test")]
+    [Fact]
     public void ToRegex_SimplePatterns_ReturnsCorrectPattern()
     {
-        var groupPattern = new GroupPattern();
-        // groupPattern.Patterns.Add(new Pattern { Type = "CharacterClass", Value = "[a-z]" });
-        var expected = "[a-z]";
-        Assert.Equal(expected, groupPattern.ToRegex());
+        var groupPattern = new GroupPattern { Properties = new PatternProperties { GroupType = "Capturing" } };
+        groupPattern.Patterns.Add(new Pattern { Type = "Literal", Value = new PatternValue { Value = "abc" } });
+        var expected = "(abc)";
+        var result = groupPattern.ToRegex();
+        Assert.Equal(expected, result);
     }
 
     //TODO: WithQuantifiers
