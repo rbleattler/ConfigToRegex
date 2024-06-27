@@ -126,6 +126,6 @@ public class PatternValue : IPatternValue
     {
       return patternValue.ToRegex();
     }
-    return Value!.ToString();
+    return Value?.ToString() ?? string.Empty;
   }
 }
