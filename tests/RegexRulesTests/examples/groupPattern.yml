@@ -7,5 +7,5 @@ Patterns:
       Value: testGroup0
 Properties:
   Name: testGroup0Name
-  GroupType: Named
+  GroupType: NamedCapturing
   NamedGroupStyle: AngleBrackets
