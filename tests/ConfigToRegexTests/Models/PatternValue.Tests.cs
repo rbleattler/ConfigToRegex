@@ -18,10 +18,10 @@ public class PatternValueTests : RegexRuleTestCore
   }
 
   [Fact]
-  public void DefaultConstructor_SetsValueToEmptyString()
+  public void DefaultConstructor_SetsValueTo_Null()
   {
     var patternValue = new PatternValue();
-    Assert.Equal(string.Empty, patternValue.Value);
+    Assert.Equal(null, patternValue.Value);
   }
 
   [Fact]
