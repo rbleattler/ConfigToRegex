@@ -14,7 +14,7 @@ public class PatternProperties : IPatternProperties
 
   [JsonPropertyName("GroupType")]
   [YamlMember(Alias = "GroupType")]
-  [AllowedValues("NonCapturing", "Capturing", "Named")]
+  [AllowedValues("NonCapturing", "Capturing", "NamedCapturing")]
   public string? GroupType { get; set; }
 
   [JsonPropertyName("NamedGroupStyle")]
