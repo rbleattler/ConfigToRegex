@@ -61,4 +61,77 @@ public class QuantifierTests
         Quantifier quantifier = new Quantifier { Lazy = true };
         Assert.Equal("?", quantifier.ToRegex("a"));
     }
+
+    [Fact]
+    public void CanBeGreedy_ReturnsTrue_WhenGreedyIsTrue_And_PatternDoesNotEndWithQuantifier()
+    {
+        // Arrange
+        var quantifier = new Quantifier
+        {
+            Greedy = true
+        };
+        var pattern = "abc";
+
+        // Act
+        var result = quantifier.CanBeGreedy(pattern);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void CanBeGreedy_ReturnsFalse_WhenPatternEndsWithQuantifier()
+    {
+        // Arrange
+        var quantifier = new Quantifier();
+        var pattern = "abc*";
+
+        // Act
+        var result = quantifier.CanBeGreedy(pattern);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void CanBeGreedy_ReturnsFalse_WhenPatternEndsWithExactlyQuantifier()
+    {
+        // Arrange
+        var quantifier = new Quantifier();
+        var pattern = "abc{2}";
+
+        // Act
+        var result = quantifier.CanBeGreedy(pattern);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void CanBeGreedy_ReturnsFalse_WhenPatternEndsWithMinAndMaxQuantifier()
+    {
+        // Arrange
+        var quantifier = new Quantifier();
+        var pattern = "abc{2,5}";
+
+        // Act
+        var result = quantifier.CanBeGreedy(pattern);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void CanBeGreedy_ReturnsFalse_WhenPatternEndsWithLazyQuantifier()
+    {
+        // Arrange
+        var quantifier = new Quantifier();
+        var pattern = "abc?";
+
+        // Act
+        var result = quantifier.CanBeGreedy(pattern);
+
+        // Assert
+        Assert.False(result);
+    }
 }
