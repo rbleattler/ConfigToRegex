@@ -168,11 +168,7 @@ public class GroupPattern : IGroup
     }
     foreach (var pattern in Patterns)
     {
-      // if (pattern.Type == "CharacterClass" || pattern.Type == "Anchor")
-      // {
-        // Due to the fluent nature of FluentRegex, its easier to just append the literal value than to use the StartCharacterClass or StartAnchor methods from FluentRegex.
-        regex.AppendLiteral(pattern.ToRegex());
-      // }
+      regex.AppendLiteral(pattern.ToRegex());
     }
     if (Quantifiers != null)
     {

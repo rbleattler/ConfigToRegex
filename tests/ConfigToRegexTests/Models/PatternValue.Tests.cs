@@ -12,7 +12,6 @@ public class PatternValueTests : RegexRuleTestCore
     for (var i = 0; i < AllTestFiles.Length; i++)
     {
       var PatternValue = new PatternValue(ReadFileAsString(AllTestFiles[i]));
-      // Console.WriteLine($"Test file: {AllTestFiles[i]}");
       Assert.NotNull(PatternValue);
     }
   }
