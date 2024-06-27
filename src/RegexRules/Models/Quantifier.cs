@@ -116,16 +116,6 @@ public class Quantifier : IQuantifier
 
   }
 
-
-  void IRegexSerializable.DeserializeJson(string jsonString)
-  {
-    DeserializeJson(jsonString);
-  }
-
-  void IRegexSerializable.DeserializeYaml(string yamlString)
-  {
-    DeserializeYaml(yamlString);
-  }
   public string ToRegex(string pattern = "")
   {
     // This takes the pattern as a parameter so that we can avoid invalid regex (I.E. **)
@@ -166,7 +156,7 @@ public class Quantifier : IQuantifier
       }
       sb.Append('}');
     }
-    if (Greedy.HasValue && Greedy == true && !pattern.EndsWith("*") && !pattern.EndsWith("+") && !pattern.EndsWith("?") && !Exactly.HasValue && !Min.HasValue && !Max.HasValue)
+    if (CanBeGreedy(pattern))
     {
       sb.Append('*');
     }
@@ -183,6 +173,29 @@ public class Quantifier : IQuantifier
 
     return sb.ToString();
   }
+
+  internal bool CanBeGreedy(string pattern)
+  {
+    return Greedy.HasValue
+            && Greedy == true
+            && !pattern.EndsWith("*")
+            && !pattern.EndsWith("+")
+            && !pattern.EndsWith("?")
+            && !Exactly.HasValue
+            && !Min.HasValue
+            && !Max.HasValue;
+  }
+
+  void IRegexSerializable.DeserializeJson(string jsonString)
+  {
+    DeserializeJson(jsonString);
+  }
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    DeserializeYaml(yamlString);
+  }
+
 
   string IRegexSerializable.ToRegex()
   {
