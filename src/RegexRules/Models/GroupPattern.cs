@@ -48,7 +48,7 @@ public class GroupPattern : IGroup
 
   [JsonPropertyName("Quantifiers")]
   [YamlMember(Alias = "Quantifiers")]
-  public IQuantifier? Quantifiers { get; set; }
+  public Quantifier? Quantifiers { get; set; }
 
   [JsonPropertyName("Position")]
   [YamlMember(Alias = "Position")]
@@ -155,26 +155,54 @@ public class GroupPattern : IGroup
     // Use FluentRegex to build the regex pattern
     GroupBuilder regex;
     var groupType = (GroupType)Enum.Parse(typeof(GroupType), Properties.GroupType!);
-    if (Properties.GroupType != "Named")
+
+    if (Properties.GroupType != "NamedCapturing")
     {
       // Get FluentRegex.GroupType from Properties.GroupType
       regex = new GroupBuilder(new PatternBuilder(), groupType);
     }
     else
     {
-      regex = new GroupBuilder(new PatternBuilder(), groupType);
+      //TODO: Coverage for other group styles
+      regex = new GroupBuilder(new PatternBuilder(), NamedGroupStyle.AngleBrackets, Properties.Name!);
     }
     foreach (var pattern in Patterns)
     {
-      if (pattern.Type == "CharacterClass" || pattern.Type == "Anchor")
-      {
+      // if (pattern.Type == "CharacterClass" || pattern.Type == "Anchor")
+      // {
+        // Due to the fluent nature of FluentRegex, its easier to just append the literal value than to use the StartCharacterClass or StartAnchor methods from FluentRegex.
         regex.AppendLiteral(pattern.ToRegex());
-      }
+      // }
     }
     if (Quantifiers != null)
     {
-      regex.AppendLiteral(Quantifiers.ToRegex());
+      if (null != Quantifiers.Min && null != Quantifiers.Max)
+      {
+        regex.Times(Quantifiers.Min!.Value, Quantifiers.Max!.Value);
+      }
+      else if (null != Quantifiers.Min)
+      {
+        regex.Times(Quantifiers.Min!.Value);
+      }
+      else if (null != Quantifiers.Max)
+      {
+        regex.Times(0, Quantifiers.Max!.Value);
+      }
+
+      if (Quantifiers.Lazy == true)
+      {
+        regex.Lazy();
+      }
+
+      if (Quantifiers.CanBeGreedy(ToRegex()))
+      {
+        regex.AppendLiteral("*");
+      }
+
+      // Should we just go about it this way since we already have the logic in ToRegex()?
+      // regex.AppendLiteral(Quantifiers.ToRegex());
     }
-    return regex.ToString();
+    return regex.Build().ToString();
+    // return regex.ToString();
   }
 }
