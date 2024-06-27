@@ -19,7 +19,7 @@ public interface IGroup : IPattern, IRegexSerializable
     set => Patterns = (List<Pattern>)value!;
   }
 
-  public new IQuantifier? Quantifiers { get; set; }
+  public new Quantifier? Quantifiers { get; set; }
 
   public int Position { get; set; }
 
