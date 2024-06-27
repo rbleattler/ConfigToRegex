@@ -178,16 +178,11 @@ public class Pattern : IPattern
   public string ToRegex()
   {
     StringBuilder regex = new();
-    if (null != Value && !string.IsNullOrEmpty(Value.ToString()))
+    if (null != Value && !string.IsNullOrEmpty(Value.ToString()) && Type == "Literal")
     {
-      if (Type == "Literal")
-      {
-        regex.Append(Value.ToString());
-      }
-
+      regex.Append(Value.ToString());
     }
-
-    if (null != Value && !string.IsNullOrEmpty(Value.ToRegex()) && (Type == "Anchor" || Type == "CharacterClass" || Type == "Group"))
+    else if (null != Value && !string.IsNullOrEmpty(Value.ToRegex()) && (Type == "Anchor" || Type == "CharacterClass" || Type == "Group"))
     {
       regex.Append(Value.ToRegex());
     }
