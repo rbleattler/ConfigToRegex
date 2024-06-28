@@ -38,7 +38,7 @@ public interface IPattern : IRegexSerializable
 
   internal bool IsJson(string patternObject)
   {
-    return patternObject.StartsWith("{") && patternObject.EndsWith("}");
+    return patternObject.StartsWith('{') && patternObject.EndsWith('}');
   }
 
   internal bool IsYaml(string patternObject)

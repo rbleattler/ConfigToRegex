@@ -73,7 +73,7 @@ public class Quantifier : IQuantifier
   {
     // deserialize the string using json or yaml
 
-    if (!string.IsNullOrEmpty(quantifierObject) && quantifierObject.StartsWith("{") && quantifierObject.EndsWith("}"))
+    if (!string.IsNullOrEmpty(quantifierObject) && quantifierObject.StartsWith('{') && quantifierObject.EndsWith('}'))
     {
       var deserializedValue = JsonSerializer.Deserialize<Quantifier>(quantifierObject);
       Min = deserializedValue!.Min;
@@ -109,9 +109,9 @@ public class Quantifier : IQuantifier
   {
     return Greedy.HasValue
             && Greedy == true
-            && !pattern.EndsWith("*")
-            && !pattern.EndsWith("+")
-            && !pattern.EndsWith("?")
+            && !pattern.EndsWith('*')
+            && !pattern.EndsWith('+')
+            && !pattern.EndsWith('?')
             && !Exactly.HasValue
             && !Min.HasValue
             && !Max.HasValue;
@@ -169,7 +169,7 @@ public class Quantifier : IQuantifier
   /// <exception cref="Exception"></exception>
   public void DeserializeJson(string jsonString)
   {
-    var pattern = JsonSerializer.Deserialize<Quantifier>(jsonString) ?? throw new Exception("Invalid JSON");
+    var pattern = JsonSerializer.Deserialize<Quantifier>(jsonString) ?? throw new InvalidJsonException("Invalid JSON");
 
     if (pattern != null)
     {
@@ -222,12 +222,13 @@ public class Quantifier : IQuantifier
       }
       sb.Append('}');
     }
+
     if (CanBeGreedy(pattern))
     {
       sb.Append('*');
     }
 
-    if (Lazy.HasValue && Lazy == true && !pattern.EndsWith("?"))
+    if (Lazy.HasValue && Lazy == true && !pattern.EndsWith('?'))
     {
       // If this is appended when there are min/max declared, it can still be valid.
       // Example:

@@ -152,7 +152,7 @@ public class CharacterClassPattern : ICharacterClass
 
     public CharacterClassPattern(string CharacterClassPatternObject)
     {
-        if (CharacterClassPatternObject.StartsWith("\\"))
+        if (CharacterClassPatternObject.StartsWith('\\'))
         {
             if (IsValidCharacterClass(CharacterClassPatternObject))
             {
