@@ -187,42 +187,15 @@ public class Quantifier : IQuantifier
     // This takes the pattern as a parameter so that we can avoid invalid regex (I.E. **)
     StringBuilder sb = new();
 
-    if (Exactly.HasValue && Exactly > 0)
-    {
-      sb.Append($"{{{Exactly}}}");
-    }
-    else if (Min! == 0 && !Max.HasValue)
-    {
-      sb.Append('*');
-    }
-    else if (Min == 1 && !Max.HasValue)
-    {
-      sb.Append('+');
-    }
-    else if (Min == 0 && Max! == 1)
-    {
-      sb.Append('?');
-    }
-    // if min has value, and the value > 0, and max has value, and the value is >= 0 , and Max >= Min
-    else if (Max < Min)
-    {
-      throw new SerializationException("Max must be greater than or equal to Min.");
-    }
-    else if (Min.HasValue && Max.HasValue && Max >= Min || Min.HasValue || Max.HasValue)
-    {
-      sb.Append('{');
-      if (Min.HasValue)
-      {
-        sb.Append(Min);
-      }
-      sb.Append(',');
-      if (Max.HasValue)
-      {
-        sb.Append(Max);
-      }
-      sb.Append('}');
-    }
+    BuildQuantifierString(sb);
 
+    ProcessQuantifierLaziness(pattern, sb);
+
+    return sb.ToString();
+  }
+
+  private void ProcessQuantifierLaziness(string pattern, StringBuilder sb)
+  {
     if (CanBeGreedy(pattern))
     {
       sb.Append('*');
@@ -237,11 +210,33 @@ public class Quantifier : IQuantifier
       // | A{2,9}? |	Two to nine As, as few as needed to allow the overall pattern to match (lazy) |
       sb.Append('?');
     }
-
-    return sb.ToString();
   }
 
-
-
-
+  private void BuildQuantifierString(StringBuilder sb)
+  {
+    if (Exactly.HasValue && Exactly > 0)
+    {
+      sb.Append($"{{{Exactly}}}");
+    }
+    else if (Min == 0 && !Max.HasValue)
+    {
+      sb.Append('*');
+    }
+    else if (Min == 1 && !Max.HasValue)
+    {
+      sb.Append('+');
+    }
+    else if (Min == 0 && Max == 1)
+    {
+      sb.Append('?');
+    }
+    else if (Min.HasValue && Max.HasValue && Max >= Min)
+    {
+      sb.Append($"{{{Min},{Max}}}");
+    }
+    else if (Min.HasValue && Max.HasValue && Max < Min)
+    {
+      throw new SerializationException("Max must be greater than or equal to Min.");
+    }
+  }
 }
