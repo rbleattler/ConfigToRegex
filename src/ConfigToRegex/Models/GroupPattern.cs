@@ -9,7 +9,7 @@ namespace ConfigToRegex;
 [YamlSerializable]
 public class GroupPattern : IGroup
 {
-  private string _type = "Group";
+  private readonly string _type = "Group";
 
   string? IPattern.Id
   {
@@ -104,7 +104,7 @@ public class GroupPattern : IGroup
   private void DeserializeYaml(string groupObjectPattern)
   {
     var deserializer = new Deserializer();
-    var pattern = deserializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new Exception("Invalid YAML");
+    var pattern = deserializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new InvalidYamlException("Invalid YAML");
 
     Id = pattern.Id;
     Message = pattern.Message;
@@ -116,7 +116,7 @@ public class GroupPattern : IGroup
 
   private void DeserializeJson(string groupObjectPattern)
   {
-    var pattern = JsonSerializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new Exception("Invalid JSON");
+    var pattern = JsonSerializer.Deserialize<GroupPattern>(groupObjectPattern) ?? throw new InvalidJsonException("Invalid JSON");
 
     Id = pattern.Id;
     Message = pattern.Message;
@@ -168,37 +168,90 @@ public class GroupPattern : IGroup
     }
     foreach (var pattern in Patterns)
     {
-      regex.AppendLiteral(pattern.ToRegex());
+      ProcessPattern(regex, pattern);
     }
+    var outRegex = regex.Build();
+
     if (Quantifiers != null)
     {
       if (null != Quantifiers.Min && null != Quantifiers.Max)
       {
-        regex.Times(Quantifiers.Min!.Value, Quantifiers.Max!.Value);
+        outRegex.Times(Quantifiers.Min!.Value, Quantifiers.Max!.Value);
       }
       else if (null != Quantifiers.Min)
       {
-        regex.Times(Quantifiers.Min!.Value);
+        outRegex.Times(Quantifiers.Min!.Value);
       }
       else if (null != Quantifiers.Max)
       {
-        regex.Times(0, Quantifiers.Max!.Value);
+        outRegex.Times(0, Quantifiers.Max!.Value);
       }
 
       if (Quantifiers.Lazy == true)
       {
-        regex.Lazy();
+        outRegex.Lazy();
       }
 
-      if (Quantifiers.CanBeGreedy(ToRegex()))
+      if (Quantifiers.CanBeGreedy(ToString()!))
       {
-        regex.AppendLiteral("*");
+        outRegex.AppendLiteral("*");
       }
 
-      // Should we just go about it this way since we already have the logic in ToRegex()?
-      // regex.AppendLiteral(Quantifiers.ToRegex());
     }
-    return regex.Build().ToString();
-    // return regex.ToString();
+    return outRegex.Build().ToString();
+  }
+
+  private static void ProcessPattern(GroupBuilder regex, Pattern pattern)
+  {
+    switch (pattern.Type)
+    {
+      case "Literal":
+        regex.AppendLiteral(pattern.ToRegex());
+        break;
+      case "Anchor":
+        var isAnchorType = AnchorPattern.IsValidAnchorType(pattern.Value.ToRegex());
+        var isValidAnchor = AnchorPattern.IsValidAnchor(pattern.Value.ToRegex());
+        if (isAnchorType)
+        {
+          regex.StartAnchor()
+               .InvokeMethod(pattern.Value)
+               .Build();
+        }
+        else if (isValidAnchor)
+        {
+          regex.AppendLiteral(pattern.Value);
+        }
+        break;
+      case "CharacterClass":
+        var isCharacterClass = CharacterClassPattern.IsValidCharacterClass(pattern.Value.ToRegex()) || CharacterClassPattern.IsCustomCharacterClass(pattern.Value.ToRegex());
+        var isCharacterClassType = CharacterClassPattern.IsValidCharacterClassType
+        (pattern.Value.ToRegex());
+
+        if (isCharacterClass)
+        {
+          var literalRegex = pattern.Value.ToRegex();
+          regex.AppendLiteral(literalRegex);
+        }
+        else if (isCharacterClassType)
+        {
+          regex.StartCharacterClass()
+               .InvokeMethod(pattern.Value)
+               .Build();
+        }
+        break;
+      case "Group":
+        regex.AppendLiteral(pattern.ToRegex());
+        break;
+      default:
+        try
+        {
+          regex.AppendLiteral(pattern.ToRegex());
+        }
+        catch
+        {
+          throw new ArgumentException("Invalid Pattern Type. (" + pattern.Type + ") Valid types are: Literal, Anchor, CharacterClass, Group");
+        }
+        break;
+    }
   }
 }
