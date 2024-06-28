@@ -24,11 +24,23 @@ public class Pattern : IPattern
     set => Quantifiers = (Quantifier?)value;
   }
 
+  [JsonPropertyName("Properties")]
+  [YamlMember(Alias = "Properties")]
+  public IPatternProperties? Properties { get; set; }
 
+
+  /// <summary>
+  /// The unique identifier for the pattern
+  /// </summary>
   [JsonPropertyName("Id")]
   [YamlMember(Alias = "Id")]
   public string? Id { get; set; } = Guid.NewGuid().ToString();
 
+  /// <summary>
+  /// The type of pattern. The default value is "Literal".
+  /// </summary>
+  /// <value>Literal, Anchor, CharacterClass, Group</value>
+  /// <exception cref="ArgumentException">Thrown when an invalid pattern type is set.</exception>
   [Required]
   [JsonPropertyName("Type")]
   [YamlMember(Alias = "Type")]
@@ -49,22 +61,30 @@ public class Pattern : IPattern
     }
   }
 
+  /// <summary>
+  /// The <see cref="PatternValue"/> for the pattern. The default value is an empty string.
+  /// </summary>
   [JsonPropertyName("Value")]
   [YamlMember(Alias = "Value")]
   public PatternValue Value { get; set; }
 
+  /// <summary>
+  /// The <see cref="Quantifier"/>s for the pattern
+  /// </summary>
   [JsonPropertyName("Quantifiers")]
   [YamlMember(Alias = "Quantifiers")]
   public Quantifier? Quantifiers { get; set; }
 
-  [JsonPropertyName("Properties")]
-  [YamlMember(Alias = "Properties")]
-  public IPatternProperties? Properties { get; set; }
-
+  /// <summary>
+  /// The message for the pattern. This is an optional parameter. It is used to provide additional information about the pattern.
+  /// </summary>
   [JsonPropertyName("Message")]
   [YamlMember(Alias = "Message")]
   public string? Message { get; set; }
 
+  /// <summary>
+  /// The <see cref="JsonSchema"/> for the pattern.
+  /// </summary>
   [JsonIgnore]
   [YamlIgnore]
   JsonSchema IPattern.JsonSchema => JsonSchema.FromType(GetType());
@@ -96,7 +116,6 @@ public class Pattern : IPattern
     Message = message;
   }
 
-
   public Pattern()
   {
     Value = new PatternValue(string.Empty);
@@ -107,17 +126,27 @@ public class Pattern : IPattern
     Value = pattern;
   }
 
-  public override string ToString()
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
   {
-    return Value.ToString()!;
+    DeserializeYaml(yamlString);
   }
 
-  public static implicit operator PatternValue(Pattern pattern)
+  void IRegexSerializable.DeserializeJson(string jsonString)
   {
-    return pattern.Value;
+    DeserializeJson(jsonString);
   }
 
-  private void DeserializeYaml(string patternObject)
+  private static bool IsValidPatternType(string type)
+  {
+    return type == "Literal" || type == "Anchor" || type == "CharacterClass" || type == "Group";
+  }
+
+  /// <summary>
+  /// Deserializes a YAML string to a <see cref="Pattern"/>
+  /// </summary>
+  /// <param name="patternObject"></param>
+  public void DeserializeYaml(string patternObject)
   {
     var deserializer = new Deserializer();
     var pattern = deserializer.Deserialize<Pattern>(patternObject);
@@ -132,7 +161,11 @@ public class Pattern : IPattern
     }
   }
 
-  private void DeserializeJson(string patternObject)
+  /// <summary>
+  /// Deserializes a JSON string to a <see cref="Pattern"/>
+  /// </summary>
+  /// <param name="patternObject"></param>
+  public void DeserializeJson(string patternObject)
   {
     var pattern = JsonSerializer.Deserialize<Pattern>(patternObject);
     if (pattern != null)
@@ -146,12 +179,28 @@ public class Pattern : IPattern
     }
   }
 
-  private static bool IsValidPatternType(string type)
+  /// <summary>
+  /// Returns a string representation of the pattern (the <see cref="Value"/>) of the pattern.)
+  /// </summary>
+  /// <returns> <see cref="string"/> </returns>
+  public override string ToString()
   {
-    return type == "Literal" || type == "Anchor" || type == "CharacterClass" || type == "Group";
+    return Value.ToString()!;
   }
 
+  /// <summary>
+  /// Converts a <see cref="Pattern"/> to a <see cref="PatternValue"/>
+  /// </summary>
+  /// <param name="pattern"></param>
+  public static implicit operator PatternValue(Pattern pattern)
+  {
+    return pattern.Value;
+  }
 
+  /// <summary>
+  /// Serializes the <see cref="Pattern"/> to a YAML string
+  /// </summary>
+  /// <returns></returns>
   public string SerializeYaml()
   {
     var serializer = new SerializerBuilder().Build();
@@ -159,22 +208,20 @@ public class Pattern : IPattern
     return yaml;
   }
 
+  /// <summary>
+  /// Serializes the <see cref="Pattern"/> to a JSON string
+  /// </summary>
+  /// <returns></returns>
   public string SerializeJson()
   {
     var json = JsonSerializer.Serialize(this);
     return json;
   }
 
-  void IRegexSerializable.DeserializeYaml(string yamlString)
-  {
-    DeserializeYaml(yamlString);
-  }
-
-  void IRegexSerializable.DeserializeJson(string jsonString)
-  {
-    DeserializeJson(jsonString);
-  }
-
+  /// <summary>
+  /// Converts the <see cref="Pattern"/> to a regular expression string.
+  /// </summary>
+  /// <returns></returns>
   public string ToRegex()
   {
     StringBuilder regex = new();
