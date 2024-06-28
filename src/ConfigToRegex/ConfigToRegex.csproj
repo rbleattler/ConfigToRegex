@@ -11,7 +11,7 @@
     <PackageReference Include="NJsonSchema" Version="11.0.0" />
     <PackageReference Include="NJsonSchema.Yaml" Version="11.0.0" />
     <PackageReference Include="YamlDotNet" Version="13.7.1" />
-    <PackageReference Include="RBleattler.FluentRegex" Version="24.6.27.60" />
+    <PackageReference Include="RBleattler.FluentRegex" Version="24.6.28.69" />
   </ItemGroup>
 
 </Project>
