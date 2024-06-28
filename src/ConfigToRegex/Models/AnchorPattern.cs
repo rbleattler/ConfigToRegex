@@ -6,6 +6,9 @@ using NJsonSchema;
 
 namespace ConfigToRegex;
 
+/// <summary>
+/// Represents Regular Expression Anchor as an object.
+/// </summary>
 public class AnchorPattern : IAnchor
 {
     // fields

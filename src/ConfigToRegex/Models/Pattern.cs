@@ -8,6 +8,9 @@ using System.Text;
 
 namespace ConfigToRegex;
 
+/// <summary>
+/// Represents a Regular Expression Pattern as an object.
+/// </summary>
 [YamlSerializable]
 public class Pattern : IPattern
 {

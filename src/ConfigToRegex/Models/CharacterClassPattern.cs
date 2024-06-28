@@ -12,6 +12,9 @@ namespace ConfigToRegex;
 //TODO: Custom CharacterClasses (I.E. [afv], [cC-rR], etc... basically building a custom character class), using the FluentRegex.CustomCharacterClassBuilder class
 
 
+/// <summary>
+/// Represents a Regular Expression Character Class as an object.
+/// </summary>
 public class CharacterClassPattern : ICharacterClass
 {
     private PatternValue _value = new(string.Empty);

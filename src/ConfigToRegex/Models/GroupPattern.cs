@@ -6,6 +6,9 @@ using NJsonSchema;
 
 namespace ConfigToRegex;
 
+/// <summary>
+/// Represents a Regular Expression Group as an object.
+/// </summary>
 [YamlSerializable]
 public class GroupPattern : IGroup
 {
