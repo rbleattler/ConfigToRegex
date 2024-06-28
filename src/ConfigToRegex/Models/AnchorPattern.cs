@@ -13,7 +13,7 @@ public class AnchorPattern : IAnchor
 {
     // fields
 
-    private string _type = "Anchor";
+    private readonly string _type = "Anchor";
     private PatternValue? _value;
 
 

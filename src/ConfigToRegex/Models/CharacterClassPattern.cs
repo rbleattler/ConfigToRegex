@@ -18,7 +18,7 @@ namespace ConfigToRegex;
 public class CharacterClassPattern : ICharacterClass
 {
     private PatternValue _value = new(string.Empty);
-    private string _type = "CharacterClass";
+    private readonly string _type = "CharacterClass";
 
     // Inherited Properties
 
