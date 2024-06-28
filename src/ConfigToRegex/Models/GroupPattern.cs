@@ -38,35 +38,61 @@ public class GroupPattern : IGroup
     set => Properties = (PatternProperties)value!;
   }
 
+  /// <summary>
+  /// The unique identifier for the pattern
+  /// </summary>
   [JsonPropertyName("Id")]
   [YamlMember(Alias = "Id")]
   public string? Id { get; set; } = Guid.NewGuid().ToString();
 
+  /// <summary>
+  /// The type of pattern
+  /// </summary>
   [JsonPropertyName("Type")]
   [YamlMember(Alias = "Type")]
   public string Type { get; set; } = "Group";
 
+  /// <summary>
+  /// The <see cref="Quantifier"/>s for the pattern
+  /// </summary>
   [JsonPropertyName("Quantifiers")]
   [YamlMember(Alias = "Quantifiers")]
   public Quantifier? Quantifiers { get; set; }
 
+  //TODO: Position is not currently implemented for Group construction.
+  /// <summary>
+  /// The position of the pattern in the pattern group (not currently implemented)
+  /// </summary>
   [JsonPropertyName("Position")]
   [YamlMember(Alias = "Position")]
   public int Position { get; set; }
 
+  /// <summary>
+  /// The patterns that make up the group
+  /// </summary>
+  /// <value><see cref="List{Pattern}"/></value>
   [JsonPropertyName("Patterns")]
   [YamlMember(Alias = "Patterns")]
   public List<Pattern> Patterns { get; set; } = new List<Pattern>();
 
+  /// <summary>
+  /// The message for the pattern. This is an optional property, used to provide additional information about the pattern.
+  /// </summary>
   [JsonPropertyName("Message")]
   [YamlMember(Alias = "Message")]
   public string? Message { get; set; }
 
+  /// <summary>
+  /// The <see cref="PatternProperties"/> for the pattern.
+  /// </summary>
   [JsonPropertyName("Properties")]
   [YamlMember(Alias = "Properties")]
   public PatternProperties Properties { get; set; } = new PatternProperties();
 
 
+  /// <summary>
+  /// The <see cref="JsonSchema"/> for the pattern. This is a generated property and is not intended to be set.
+  /// </summary>
   [JsonIgnore]
   [YamlIgnore]
   JsonSchema IPattern.JsonSchema => JsonSchema.FromType(GetType());
@@ -97,6 +123,18 @@ public class GroupPattern : IGroup
 
   }
 
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    DeserializeYaml(yamlString);
+  }
+
+  void IRegexSerializable.DeserializeJson(string jsonString)
+  {
+    DeserializeJson(jsonString);
+  }
+
+
   private bool IsJson(string patternObject) => ((IPattern)this).IsJson(patternObject);
 
   private bool IsYaml(string patternObject) => ((IPattern)this).IsYaml(patternObject);
@@ -125,80 +163,6 @@ public class GroupPattern : IGroup
     Properties = pattern.Properties;
     Quantifiers = pattern.Quantifiers;
 
-  }
-
-  public string SerializeYaml()
-  {
-    var serializer = new SerializerBuilder().Build();
-    var yaml = serializer.Serialize(this);
-    return yaml;
-  }
-
-  public string SerializeJson()
-  {
-    var json = JsonSerializer.Serialize(this);
-    return json;
-  }
-
-  void IRegexSerializable.DeserializeYaml(string yamlString)
-  {
-    DeserializeYaml(yamlString);
-  }
-
-  void IRegexSerializable.DeserializeJson(string jsonString)
-  {
-    DeserializeJson(jsonString);
-  }
-
-  public string ToRegex()
-  {
-    // Use FluentRegex to build the regex pattern
-    GroupBuilder regex;
-    var groupType = (GroupType)Enum.Parse(typeof(GroupType), Properties.GroupType!);
-
-    if (Properties.GroupType != "NamedCapturing")
-    {
-      // Get FluentRegex.GroupType from Properties.GroupType
-      regex = new GroupBuilder(new PatternBuilder(), groupType);
-    }
-    else
-    {
-      //TODO: Coverage for other group styles
-      regex = new GroupBuilder(new PatternBuilder(), NamedGroupStyle.AngleBrackets, Properties.Name!);
-    }
-    foreach (var pattern in Patterns)
-    {
-      ProcessPattern(regex, pattern);
-    }
-    var outRegex = regex.Build();
-
-    if (Quantifiers != null)
-    {
-      if (null != Quantifiers.Min && null != Quantifiers.Max)
-      {
-        outRegex.Times(Quantifiers.Min!.Value, Quantifiers.Max!.Value);
-      }
-      else if (null != Quantifiers.Min)
-      {
-        outRegex.Times(Quantifiers.Min!.Value);
-      }
-      else if (null != Quantifiers.Max)
-      {
-        outRegex.Times(0, Quantifiers.Max!.Value);
-      }
-
-      if (Quantifiers.Lazy == true)
-      {
-        outRegex.Lazy();
-      }
-
-      if (Quantifiers.CanBeGreedy(ToString()!))
-      {
-        outRegex.AppendLiteral("*");
-      }
-
-    }
-    return outRegex.Build().ToString();
   }
 
   private static void ProcessPattern(GroupBuilder regex, Pattern pattern)
@@ -254,4 +218,82 @@ public class GroupPattern : IGroup
         break;
     }
   }
+
+  /// <summary>
+  /// Serializes the <see cref="GroupPattern"/> to a YAML string
+  /// </summary>
+  /// <returns><see cref="string"/></returns>
+  public string SerializeYaml()
+  {
+    var serializer = new SerializerBuilder().Build();
+    var yaml = serializer.Serialize(this);
+    return yaml;
+  }
+
+  /// <summary>
+  /// Serializes the <see cref="GroupPattern"/> to a JSON string
+  /// </summary>
+  /// <returns><see cref="string"/></returns>
+  public string SerializeJson()
+  {
+    var json = JsonSerializer.Serialize(this);
+    return json;
+  }
+
+  /// <summary>
+  /// Returns the pattern as a regular expression string.
+  /// </summary>
+  /// <returns><see cref="string"/></returns>
+  public string ToRegex()
+  {
+    // Use FluentRegex to build the regex pattern
+    GroupBuilder regex;
+    var groupType = (GroupType)Enum.Parse(typeof(GroupType), Properties.GroupType!);
+
+    if (Properties.GroupType != "NamedCapturing")
+    {
+      // Get FluentRegex.GroupType from Properties.GroupType
+      regex = new GroupBuilder(new PatternBuilder(), groupType);
+    }
+    else
+    {
+      //TODO: Coverage for other group styles
+      regex = new GroupBuilder(new PatternBuilder(), NamedGroupStyle.AngleBrackets, Properties.Name!);
+    }
+    foreach (var pattern in Patterns)
+    {
+      ProcessPattern(regex, pattern);
+    }
+    var outRegex = regex.Build();
+
+    if (Quantifiers != null)
+    {
+      if (null != Quantifiers.Min && null != Quantifiers.Max)
+      {
+        outRegex.Times(Quantifiers.Min!.Value, Quantifiers.Max!.Value);
+      }
+      else if (null != Quantifiers.Min)
+      {
+        outRegex.Times(Quantifiers.Min!.Value);
+      }
+      else if (null != Quantifiers.Max)
+      {
+        outRegex.Times(0, Quantifiers.Max!.Value);
+      }
+
+      if (Quantifiers.Lazy == true)
+      {
+        outRegex.Lazy();
+      }
+
+      if (Quantifiers.CanBeGreedy(ToString()!))
+      {
+        outRegex.AppendLiteral("*");
+      }
+
+    }
+    return outRegex.Build().ToString();
+  }
+
+
 }
