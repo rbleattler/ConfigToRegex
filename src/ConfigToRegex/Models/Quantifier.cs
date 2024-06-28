@@ -8,29 +8,50 @@ using YamlDotNet.Serialization;
 
 namespace ConfigToRegex;
 
+/// <summary>
+/// Represents a Regular Expression Quantifier as an object. This can be used on any <see cref="IPattern"/> object.
+/// </summary>
 [YamlSerializable]
 public class Quantifier : IQuantifier
 {
+  /// <summary>
+  /// The minimum number of times the pattern must match.
+  /// </summary>
   [JsonPropertyName("Min")]
   [YamlMember(Alias = "Min", Description = "The minimum number of times the pattern must match.")]
   public int? Min { get; set; }
 
+  /// <summary>
+  /// The maximum number of times the pattern can match.
+  /// </summary>
   [JsonPropertyName("Max")]
   [YamlMember(Alias = "Max", Description = "The maximum number of times the pattern can match.")]
   public int? Max { get; set; }
 
+  /// <summary>
+  /// The exact number of times the pattern must match.
+  /// </summary>
   [JsonPropertyName("Exactly")]
   [YamlMember(Alias = "Exactly", Description = "The exact number of times the pattern must match.")]
   public int? Exactly { get; set; }
 
+  /// <summary>
+  /// Whether the quantifier is lazy.
+  /// </summary>
   [JsonPropertyName("Lazy")]
   [YamlMember(Alias = "Lazy", Description = "Whether the quantifier is lazy.")]
   public bool? Lazy { get; set; }
 
+  /// <summary>
+  /// Whether the quantifier is greedy.
+  /// </summary>
   [JsonPropertyName("Greedy")]
   [YamlMember(Alias = "Greedy", Description = "Whether the quantifier is greedy.")]
   public bool? Greedy { get; set; }
 
+  /// <summary>
+  /// The JSON Schema for the <see cref="Quantifier"/> object. This is a generated property and is not meant to be used directly.
+  /// </summary>
   [JsonIgnore]
   [YamlIgnore]
   public JsonSchema JsonSchema => JsonSchema.FromType(GetType());
@@ -74,6 +95,38 @@ public class Quantifier : IQuantifier
     }
   }
 
+  void IRegexSerializable.DeserializeJson(string jsonString)
+  {
+    DeserializeJson(jsonString);
+  }
+
+  void IRegexSerializable.DeserializeYaml(string yamlString)
+  {
+    DeserializeYaml(yamlString);
+  }
+
+  internal bool CanBeGreedy(string pattern)
+  {
+    return Greedy.HasValue
+            && Greedy == true
+            && !pattern.EndsWith("*")
+            && !pattern.EndsWith("+")
+            && !pattern.EndsWith("?")
+            && !Exactly.HasValue
+            && !Min.HasValue
+            && !Max.HasValue;
+  }
+
+  string IRegexSerializable.ToRegex()
+  {
+    return ToRegex();
+  }
+
+
+  /// <summary>
+  /// Serializes the object to a YAML string
+  /// </summary>
+  /// <returns><see cref="string"/> representing the object in YAML format</returns>
   public string SerializeYaml()
   {
     var serializer = new SerializerBuilder().Build();
@@ -81,12 +134,20 @@ public class Quantifier : IQuantifier
     return yaml;
   }
 
+  /// <summary>
+  /// Serializes the object to a JSON string
+  /// </summary>
+  /// <returns><see cref="string"/> representing the object in JSON format</returns>
   public string SerializeJson()
   {
     var json = JsonSerializer.Serialize(this);
     return json;
   }
 
+  /// <summary>
+  /// Deserializes a YAML string to this instance of <see cref="Quantifier"/>
+  /// </summary>
+  /// <param name="yamlString"></param>
   public void DeserializeYaml(string yamlString)
   {
     var deserializer = new Deserializer();
@@ -101,6 +162,11 @@ public class Quantifier : IQuantifier
     }
   }
 
+  /// <summary>
+  /// Deserializes a JSON string to this instance of <see cref="Quantifier"/>
+  /// </summary>
+  /// <param name="jsonString"></param>
+  /// <exception cref="Exception"></exception>
   public void DeserializeJson(string jsonString)
   {
     var pattern = JsonSerializer.Deserialize<Quantifier>(jsonString) ?? throw new Exception("Invalid JSON");
@@ -174,33 +240,7 @@ public class Quantifier : IQuantifier
     return sb.ToString();
   }
 
-  internal bool CanBeGreedy(string pattern)
-  {
-    return Greedy.HasValue
-            && Greedy == true
-            && !pattern.EndsWith("*")
-            && !pattern.EndsWith("+")
-            && !pattern.EndsWith("?")
-            && !Exactly.HasValue
-            && !Min.HasValue
-            && !Max.HasValue;
-  }
 
-  void IRegexSerializable.DeserializeJson(string jsonString)
-  {
-    DeserializeJson(jsonString);
-  }
-
-  void IRegexSerializable.DeserializeYaml(string yamlString)
-  {
-    DeserializeYaml(yamlString);
-  }
-
-
-  string IRegexSerializable.ToRegex()
-  {
-    return ToRegex();
-  }
 
 
 }
