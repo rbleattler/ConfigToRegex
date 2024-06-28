@@ -3,6 +3,9 @@ using YamlDotNet.Serialization;
 
 namespace ConfigToRegex;
 
+/// <summary>
+/// Represents a Regular Expression Quantifier as an object.
+/// </summary>
 public interface IQuantifier : IRegexSerializable
 {
   [JsonPropertyName("Min")]

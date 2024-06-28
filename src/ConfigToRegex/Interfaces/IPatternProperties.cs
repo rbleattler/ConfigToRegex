@@ -2,6 +2,9 @@ using System.Text.RegularExpressions;
 
 namespace ConfigToRegex;
 
+/// <summary>
+/// Represents the properties of a Regular Expression Pattern. (This is only used for <see cref="GroupPattern"/> objects.)
+/// </summary>
 public interface IPatternProperties
 {
   public string? Name { get; set; }

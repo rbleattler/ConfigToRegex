@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace ConfigToRegex;
 
+/// <summary>
+/// Represents a Regular Expression Pattern as an object.
+/// </summary>
 public interface IPattern : IRegexSerializable
 {
   public string? Message { get; set; }

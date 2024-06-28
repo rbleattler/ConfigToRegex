@@ -4,7 +4,10 @@ using NJsonSchema;
 
 namespace ConfigToRegex;
 
-public interface ICharacterClass : IPattern, IRegexSerializable
+/// <summary>
+/// Represents a Regular Expression Character Class as an object.
+/// </summary>
+public interface ICharacterClass : IPattern
 {
     string? IPattern.Id
     {

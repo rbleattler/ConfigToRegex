@@ -4,7 +4,10 @@ using NJsonSchema;
 
 namespace ConfigToRegex;
 
-public interface IAnchor : IPattern, IRegexSerializable
+/// <summary>
+/// Represents a Regular Expression Anchor as an object.
+/// </summary>
+public interface IAnchor : IPattern
 {
     string? IPattern.Id
     {
