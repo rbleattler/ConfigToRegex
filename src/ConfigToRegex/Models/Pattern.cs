@@ -53,7 +53,7 @@ public class Pattern : IPattern
     get => _type;
     set
     {
-      if (IsValidPatternType(value) == false)
+      if (!IsValidPatternType(value))
       {
         throw new ArgumentException("Invalid Pattern Type");
       }
