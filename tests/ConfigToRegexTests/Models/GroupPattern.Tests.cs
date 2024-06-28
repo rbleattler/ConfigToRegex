@@ -58,7 +58,7 @@ public class GroupPatternTests : RegexRuleTestCore
     public void GroupPattern_ConstructorWithYamlPattern_DeserializesPattern()
     {
         // Get the test file 2
-        var testFile = AllYamlTestFiles!.Where(f => f.EndsWith("2.yml")).FirstOrDefault();
+        var testFile = Array.Find(AllYamlTestFiles!, f => f.EndsWith("2.yml"));
         var yamlPattern = ReadFileAsString(testFile!);
 
 
