@@ -155,10 +155,9 @@ public class PatternValue : IPatternValue
   {
     var pattern = JsonSerializer.Deserialize<PatternValue>(jsonString) ?? throw new ArgumentException("Invalid JSON");
 
-    if (null != pattern)
-    {
-      Value = pattern.Value ?? string.Empty;
-    }
+
+    Value = pattern.Value ?? string.Empty;
+
   }
 
   /// <summary>
