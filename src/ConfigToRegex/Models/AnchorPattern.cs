@@ -201,7 +201,7 @@ public class AnchorPattern : IAnchor
         return anchor;
     }
 
-    private static bool IsValidAnchorType(string type)
+    internal static bool IsValidAnchorType(string type)
     {
         return GetValidAnchorTypes().Contains(type);
     }
