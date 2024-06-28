@@ -71,7 +71,7 @@ public class Pattern : IPattern
 
   public Pattern(string patternObject)
   {
-    if (patternObject.StartsWith("{"))
+    if (patternObject.StartsWith('{'))
     {
       DeserializeJson(patternObject);
     }
