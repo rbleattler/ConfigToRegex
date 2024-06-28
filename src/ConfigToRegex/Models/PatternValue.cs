@@ -28,6 +28,11 @@ public class PatternValue : IPatternValue
       return string.Empty;
   }
 
+  public static implicit operator PatternValue(string value)
+  {
+    return new PatternValue(value);
+  }
+
   public PatternValue(dynamic value)
   {
     Value = value;
