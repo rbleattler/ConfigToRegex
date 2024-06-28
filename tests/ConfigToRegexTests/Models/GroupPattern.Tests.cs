@@ -74,7 +74,6 @@ public class GroupPatternTests : RegexRuleTestCore
 
     // ToRegex:
 
-    //TODO: EmptyGroupPattern
     [Fact]
     public void ToRegex_EmptyGroupPattern_ThrowsException()
     {
@@ -82,7 +81,6 @@ public class GroupPatternTests : RegexRuleTestCore
         Assert.Throws<ArgumentNullException>(() => groupPattern.ToRegex());
     }
 
-    //TODO: SimplePatterns
     [Fact]
     public void ToRegex_SimplePatterns_ReturnsCorrectPattern()
     {
@@ -91,27 +89,40 @@ public class GroupPatternTests : RegexRuleTestCore
         var expected = "(abc)";
         var result = groupPattern.ToRegex();
         Assert.Equal(expected, result);
+
+        groupPattern = new GroupPattern { Properties = new PatternProperties { GroupType = "Capturing" } };
+        var newPattern = new Pattern { Type = "CharacterClass", Value = new PatternValue { Value = "[a-z]" } };
+        groupPattern.Patterns.Add(newPattern);
+        expected = "([a-z])";
+        result = groupPattern.ToRegex();
+        Assert.Equal(expected, result);
     }
 
-    //TODO: WithQuantifiers
-    [Fact(Skip = "TODO: Implement this test")]
+    [Fact(DisplayName = "ToRegex with Quantifiers returns correct pattern")]
     public void ToRegex_WithQuantifiers_ReturnsCorrectPattern()
     {
         var groupPattern = new GroupPattern
         {
+            Properties = new PatternProperties { GroupType = "Capturing" },
+            Patterns =
+            [
+                new() { Type = "Literal", Value = new PatternValue { Value = "hello" } }
+            ],
             Quantifiers = new Quantifier { Min = 1, Max = 3 }
         };
-        var expected = "[a-z]{1,3}";
-        Assert.Equal(expected, groupPattern.ToRegex());
+        var expected = "(hello){1,3}";
+        var result = groupPattern.ToRegex();
+        Assert.Equal(expected, result);
     }
 
-    //TODO: NamedGroup
-    [Fact(Skip = "TODO: Implement this test")]
+    [Fact(DisplayName = "ToRegex with NamedGroup returns correct pattern")]
     public void ToRegex_NamedGroup_ReturnsCorrectPattern()
     {
-        var groupPattern = new GroupPattern();
-        groupPattern.Properties.Name = "testGroup";
-        groupPattern.Properties.GroupType = "Named";
+        var groupPattern = new GroupPattern
+        {
+            Properties = new PatternProperties { GroupType = "NamedCapturing", Name = "testGroup" },
+            Patterns = new List<Pattern> { new Pattern { Type = "CharacterClass", Value = new PatternValue { Value = "[a-z]" } } }
+        };
         var expected = "(?<testGroup>[a-z])"; // Assuming the named group syntax is correct
         Assert.Equal(expected, groupPattern.ToRegex());
     }
