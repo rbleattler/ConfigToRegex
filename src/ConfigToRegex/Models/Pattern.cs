@@ -175,8 +175,8 @@ public class Pattern : IPattern
     {
       Id = pattern.Id;
       Type = pattern.Type;
-      Value = (PatternValue)pattern.Value;
-      Quantifiers = (Quantifier?)pattern.Quantifiers;
+      Value = pattern.Value;
+      Quantifiers = pattern.Quantifiers;
       Properties = pattern.Properties;
       Message = pattern.Message;
     }
