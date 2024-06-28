@@ -10,7 +10,7 @@ public class GroupPatternTests : RegexRuleTestCore
     public string[] AllYamlTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "groupPattern*.yml") ?? Array.Empty<string>();
     public string[] AllJsonTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "groupPattern*.json") ?? Array.Empty<string>();
 
-    [Fact]
+    [Fact(DisplayName = "GroupPattern constructor creates valid objects from valid JSON")]
     public void AllGroupPatterns_ConstructValidObjects_FromValidYaml()
     {
         for (var i = 0; i < AllYamlTestFiles.Length; i++)
@@ -21,7 +21,7 @@ public class GroupPatternTests : RegexRuleTestCore
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "GroupPattern constructor creates valid objects from valid JSON")]
     public void GroupPattern_DefaultConstructor_CreatesEmptyPatternsList()
     {
 
@@ -35,7 +35,7 @@ public class GroupPatternTests : RegexRuleTestCore
         Assert.Empty(result);
     }
 
-    [Fact]
+    [Fact(DisplayName = "GroupPattern constructor creates valid objects from valid JSON")]
     public void GroupPattern_ConstructorWithJsonPattern_DeserializesPattern()
     {
 
@@ -54,7 +54,7 @@ public class GroupPatternTests : RegexRuleTestCore
         Assert.Equal("Named", groupPattern.Properties.GroupType);
     }
 
-    [Fact]
+    [Fact(DisplayName = "GroupPattern constructor creates valid objects from valid YAML")]
     public void GroupPattern_ConstructorWithYamlPattern_DeserializesPattern()
     {
         // Get the test file 2
@@ -74,14 +74,14 @@ public class GroupPatternTests : RegexRuleTestCore
 
     // ToRegex:
 
-    [Fact]
+    [Fact(DisplayName = "ToRegex with empty group pattern throws exception")]
     public void ToRegex_EmptyGroupPattern_ThrowsException()
     {
         var groupPattern = new GroupPattern();
         Assert.Throws<ArgumentNullException>(() => groupPattern.ToRegex());
     }
 
-    [Fact]
+    [Fact(DisplayName = "ToRegex with simple patterns returns correct pattern")]
     public void ToRegex_SimplePatterns_ReturnsCorrectPattern()
     {
         var groupPattern = new GroupPattern { Properties = new PatternProperties { GroupType = "Capturing" } };
