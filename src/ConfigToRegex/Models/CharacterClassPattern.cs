@@ -4,11 +4,12 @@ using FluentRegex;
 using System.Text.Json;
 using NJsonSchema;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 [assembly: InternalsVisibleTo("ConfigToRegexTests")]
 namespace ConfigToRegex;
 
-//TODO: Custom CharacterClasses (I.E. [afv], [cC-rR], etc... basically building a custom character class)
+//TODO: Custom CharacterClasses (I.E. [afv], [cC-rR], etc... basically building a custom character class), using the FluentRegex.CustomCharacterClassBuilder class
 
 
 public class CharacterClassPattern : ICharacterClass
@@ -167,7 +168,8 @@ public class CharacterClassPattern : ICharacterClass
             {
                 pattern = new Deserializer().Deserialize(patternObject, typeof(CharacterClassPattern)); //Deserialize<CharacterClassPattern>(patternObject);
             }
-            catch {
+            catch
+            {
                 pattern = null;
             }
             if (pattern == null)
@@ -250,7 +252,7 @@ public class CharacterClassPattern : ICharacterClass
         {
             throw new ArgumentException("Invalid CharacterClass Type. Valid types are: " + string.Join(", ", GetValidCharacterClassTypes()));
         }
-        return CharacterClass ?? string.Empty;
+        return CharacterClass;
     }
 
     private static List<string?> GetValidCharacterClassValues()
@@ -260,12 +262,29 @@ public class CharacterClassPattern : ICharacterClass
 
     internal static bool IsValidCharacterClass(string literal)
     {
-        return GetValidCharacterClassLiterals().Contains(literal);
+        return GetValidCharacterClassLiterals().Contains(literal) || IsCustomCharacterClass(literal);
+    }
+
+    internal static bool IsCustomCharacterClass(string literal)
+    {
+        bool isValidRegex;
+        try
+        {
+            isValidRegex = null != Regex.Match(literal, @"^\[.*\]$");
+        }
+        catch
+        {
+            isValidRegex = false;
+        }
+        return literal.StartsWith('[') && literal.EndsWith(']') && isValidRegex;
     }
 
     private static List<string?> GetValidCharacterClassLiterals()
     {
-        return typeof(CharacterClasses).GetFields().Select(f => f.GetValue(null))!.ToList<object>().ConvertAll<string?>(x => x?.ToString())!;
+        return typeof(CharacterClasses).GetFields()
+                                       .Select(f => f.GetValue(null))!
+                                       .ToList<object>()
+                                       .ConvertAll(x => x?.ToString())!;
     }
 
     internal static bool IsValidCharacterClassType(string type)
