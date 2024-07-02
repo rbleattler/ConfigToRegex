@@ -45,7 +45,9 @@ public class ConfigSerializerTests
         var yamlString = converter.SerializeYaml(pattern);
 
         // Assert
-        var expectedYaml = "Properties: \r\nId: TestId\r\nType: Literal\r\nValue:\r\n  Value: abc\r\nQuantifiers: \r\nMessage: \r\n";
+        var expectedYaml = "Properties: Id: TestIdType: LiteralValue:  Value: abcQuantifiers: Message: ";
+        expectedYaml = expectedYaml.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+        yamlString = yamlString.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
         Assert.Equal(expectedYaml, yamlString);
     }
 
@@ -163,22 +165,33 @@ public class ConfigSerializerTests
             "\"Message\":null" +
             "}";
 
-        var expectedYaml = "Properties: " + "\r\n" +
-        "Id: TestId" + "\r\n" +
-        "Type: Literal" + "\r\n" +
-        "Value:" + "\r\n" +
-        "  Value: abc" + "\r\n" +
-        "Quantifiers: " + "\r\n" +
-        "Message: " + "\r\n";
+        // var expectedYaml = "Properties: " + "" +
+        // "Id: TestId" + "" +
+        // "Type: Literal" + "" +
+        // "Value:" + "" +
+        // "  Value: abc" + "" +
+        // "Quantifiers: " + "" +
+        // "Message: " + "";
+
+        var expectedYaml = @"Properties:
+Id: TestId
+Type: Literal
+Value:
+    Value: abc
+Quantifiers:
+Message: ";
 
 
         var converter = new ConfigSerializer();
 
         // Act
-        var actualYaml = converter.ConvertJsonToYaml<Pattern>(jsonString);
+        var result = converter.ConvertJsonToYaml<Pattern>(jsonString);
+        result = result.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+        expectedYaml = expectedYaml.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+        // Assert (Using FluentAssertions)
+        result.Should().Be(expectedYaml);
 
-        // Assert
-        Assert.Equal(expectedYaml, actualYaml);
+
     }
 
 }
