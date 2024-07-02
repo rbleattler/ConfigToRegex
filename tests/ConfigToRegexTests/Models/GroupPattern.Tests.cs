@@ -1,5 +1,3 @@
-using System;
-using FluentRegex;
 using ConfigToRegex;
 
 namespace ConfigToRegexTests;
@@ -128,7 +126,7 @@ public class GroupPatternTests : RegexRuleTestCore
     }
 
 
-    //TODO: Complex patternsrn()
+    //TODO: Complex patterns
     [Fact(Skip = "TODO: Implement this test")]
     public void ToRegex_ComplexPatterns_ReturnsCorrectPattern()
     {
