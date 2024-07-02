@@ -4,6 +4,8 @@ using YamlDotNet.Core;
 
 namespace ConfigToRegex.Helpers;
 
+//TODO: Convert all tests to use FluentAssertions
+
 /// <summary>
 /// Converts configurations (JSON, YAML) to regular expressions.
 /// </summary>
@@ -11,13 +13,13 @@ namespace ConfigToRegex.Helpers;
 /// This class is responsible for converting configurations to regular expressions.
 /// It accepts configurations in JSON or YAML format.
 /// It can take string or file input.
-public class ConfigConverter
+public class ConfigSerializer
 {
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConfigConverter"/> class.
+    /// Initializes a new instance of the <see cref="ConfigSerializer"/> class.
     /// </summary>
-    public ConfigConverter()
+    public ConfigSerializer()
     {
 
     }
@@ -60,9 +62,9 @@ public class ConfigConverter
             obj.DeserializeJson(jsonString);
             return obj;
         }
-        catch
+        catch (Exception ex)
         {
-            throw new InvalidJsonException("Invalid JSON");
+            throw new InvalidJsonException("Invalid JSON : " + ex.Message, ex);
         }
     }
 
