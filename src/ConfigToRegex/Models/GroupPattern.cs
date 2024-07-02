@@ -22,6 +22,8 @@ public class GroupPattern : IGroup
   }
   IPatternValue IPattern.Value
   {
+    // This is a hack to get around the fact that the Value property is not implemented in GroupPattern but is required by the interface.
+    // TODO: Implement Value property in GroupPattern, or remove the Value property from the interface.
     get => (IPatternValue)Patterns;
     set => Patterns = (PatternList)value;
   }
