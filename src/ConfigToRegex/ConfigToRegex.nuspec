@@ -5,7 +5,7 @@
     <version>$version$</version>
     <authors>Rob Bleattler</authors>
     <owners>Rob Bleattler</owners>
-    <readme>README.md</readme>
+    <readme>README.MD</readme>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A library for creating regular expressions from configuration files (YAML/JSON)</description>
     <dependencies>
