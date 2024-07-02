@@ -1,4 +1,4 @@
-namespace ConfigToRegex;
+namespace ConfigToRegex.Exceptions;
 
 public class InvalidYamlException : Exception
 {
