@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
 using NJsonSchema;
 using System.Text.RegularExpressions;
+using ConfigToRegex.Helpers;
 
 
 namespace ConfigToRegex;
@@ -19,8 +20,8 @@ public class PatternValue : IPatternValue
   /// The value of the pattern. This can be a literal value, like a <see cref="string"/>, <see cref="char"/>, or another <see cref="PatternValue"/> object.
   /// </summary>
   [JsonPropertyName("Value")]
-  [YamlMember(Alias = "Value", Description = "The value of the pattern.")]
-  public dynamic? Value { get; set; }
+  [YamlMember(Alias = "Value")]
+  public dynamic Value { get; set; }
 
   /// <summary>
   /// The JSON Schema for the <see cref="PatternValue"/> object. This is a generated property and is not meant to be used directly.
@@ -35,7 +36,7 @@ public class PatternValue : IPatternValue
   /// <param name="patternValue"></param>
   public static implicit operator string(PatternValue patternValue)
   {
-    if (patternValue.Value != null)
+    if (!string.IsNullOrEmpty(patternValue.Value))
       return patternValue.Value.ToString();
     else
       return string.Empty;
@@ -47,7 +48,21 @@ public class PatternValue : IPatternValue
   /// <param name="value"></param>
   public static implicit operator PatternValue(string value)
   {
-    return new PatternValue(value);
+    var isJson = StringUtilities.IsJson(value);
+    var isYaml = StringUtilities.IsYaml(value);
+    if (isJson)
+    {
+      return JsonSerializer.Deserialize<PatternValue>(value)!;
+    }
+    else if (isYaml)
+    {
+      return new Deserializer().Deserialize<PatternValue>(value);
+    }
+    else
+    {
+      return new PatternValue { Value = value };
+    }
+
   }
 
   public PatternValue(dynamic value)
@@ -102,14 +117,13 @@ public class PatternValue : IPatternValue
   public override string? ToString()
   {
     // We want to return the value of the pattern as a string. If the value is another type of pattern, we want to return the value of that pattern as a string.
-    if (Value is PatternValue patternValue)
+
+    if (string.IsNullOrWhiteSpace(Value.ToString()))
     {
-      return patternValue.ToString();
+      throw new InvalidOperationException("Value is null or empty");
     }
-    return Value.ToString();
-
+    return Value!.ToString();
   }
-
   /// <summary>
   /// Serializes the object to a YAML string
   /// </summary>
