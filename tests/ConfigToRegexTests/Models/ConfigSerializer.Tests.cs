@@ -1,24 +1,30 @@
 using ConfigToRegex;
 using ConfigToRegex.Helpers;
 using ConfigToRegex.Exceptions;
+using FluentAssertions;
+using Xunit;
+
 
 namespace ConfigToRegexTests;
 
-public class ConfigConverterTests
+public class ConfigSerializerTests
 {
     [Fact(DisplayName = "DeserializeYaml throws InvalidYamlException for invalid YAML")]
     public void DeserializeYaml_InvalidYaml_ThrowsInvalidYamlException()
     {
-        var converter = new ConfigConverter();
+        var converter = new ConfigSerializer();
         var invalidYaml = "invalid: yaml: -";
 
-        Assert.Throws<InvalidYamlException>(() => converter.DeserializeYaml<IRegexSerializable>(invalidYaml));
+        Action act = () => converter.DeserializeYaml<Pattern>(invalidYaml);
+
+        act.Should()
+           .Throw<InvalidYamlException>();
     }
 
     [Fact(DisplayName = "DeserializeYaml successfully deserializes valid YAML")]
     public void DeserializeYaml_ValidYaml_ReturnsDeserializedObject()
     {
-        var converter = new ConfigConverter();
+        var converter = new ConfigSerializer();
         var validYaml = "Type: Literal\nValue:\n   Value: abc";
         var result = converter.DeserializeYaml<Pattern>(validYaml);
 
@@ -32,7 +38,7 @@ public class ConfigConverterTests
     public void SerializeYaml_ValidObject_ReturnsYamlString()
     {
         // Setup
-        var converter = new ConfigConverter();
+        var converter = new ConfigSerializer();
         var pattern = new Pattern { Properties = null, Id = "TestId", Type = "Literal", Value = new PatternValue { Value = "abc" } };
 
         // Act
@@ -51,7 +57,7 @@ public class ConfigConverterTests
         var invalidJson = "{invalid: json}";
 
         // Act & Assert
-        Assert.Throws<InvalidJsonException>(() => ConfigConverter.DeserializeJson<Pattern>(invalidJson));
+        Assert.Throws<InvalidJsonException>(() => ConfigSerializer.DeserializeJson<Pattern>(invalidJson));
     }
 
     [Fact(DisplayName = "DeSerializeJson successfully Deserializes object from JSON")]
@@ -77,7 +83,7 @@ public class ConfigConverterTests
         foreach (var json in new[] { jsonString, jsonString2 })
         {
             // Act
-            pattern = ConfigConverter.DeserializeJson<Pattern>(json);
+            pattern = ConfigSerializer.DeserializeJson<Pattern>(json);
 
             // Assert
             Assert.NotNull(pattern);
@@ -97,7 +103,7 @@ public class ConfigConverterTests
         var pattern = new Pattern { Properties = null, Id = "TestId", Type = "Literal", Value = new PatternValue { Value = "abc" } };
 
         // Act
-        var jsonString = ConfigConverter.SerializeJson(pattern);
+        var jsonString = ConfigSerializer.SerializeJson(pattern);
 
         // Assert
         var expectedJson = "{" +
@@ -131,10 +137,10 @@ public class ConfigConverterTests
             "\"Type\":\"Literal\"," +
             "\"Value\":{\"Value\":\"abc\"}," +
             "\"Quantifiers\":null," +
-            "\"Message\":null" +
+            "\"Message\":\"\"" +
             "}";
 
-        var converter = new ConfigConverter();
+        var converter = new ConfigSerializer();
 
         // Act
         var actualJson = converter.ConvertYamlToJson<Pattern>(yamlString);
@@ -166,7 +172,7 @@ public class ConfigConverterTests
         "Message: " + "\r\n";
 
 
-        var converter = new ConfigConverter();
+        var converter = new ConfigSerializer();
 
         // Act
         var actualYaml = converter.ConvertJsonToYaml<Pattern>(jsonString);
