@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using YamlDotNet.Serialization;
 
 namespace ConfigToRegex;
 
@@ -7,6 +8,7 @@ namespace ConfigToRegex;
 /// </summary>
 public interface IPatternProperties
 {
+
   public string? Name { get; set; }
 
   public string? GroupType { get; set; }
@@ -20,7 +22,7 @@ public interface IPatternProperties
 
   public bool IsYaml(string patternPropertiesObject)
   {
-    return Regex.IsMatch(patternPropertiesObject, Validation.Patterns.Yaml);
+    return Regex.IsMatch(patternPropertiesObject, Helpers.Patterns.Yaml);
   }
 
 
