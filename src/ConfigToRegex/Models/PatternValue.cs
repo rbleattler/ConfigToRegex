@@ -4,6 +4,7 @@ using YamlDotNet.Serialization;
 using NJsonSchema;
 using System.Text.RegularExpressions;
 using ConfigToRegex.Helpers;
+using System.ComponentModel;
 
 
 namespace ConfigToRegex;
@@ -16,12 +17,29 @@ namespace ConfigToRegex;
 public class PatternValue : IPatternValue
 {
 
+  private object _value;
+
   /// <summary>
   /// The value of the pattern. This can be a literal value, like a <see cref="string"/>, <see cref="char"/>, or another <see cref="PatternValue"/> object.
   /// </summary>
   [JsonPropertyName("Value")]
-  [YamlMember(Alias = "Value")]
-  public dynamic Value { get; set; }
+  [YamlMember(Alias = "Value", DefaultValuesHandling = DefaultValuesHandling.OmitNull)]
+  public object Value
+  {
+    get => _value;
+    set
+    {
+      if (value is string || value is PatternValue)
+        _value = value;
+      else if (value is not IRegexSerializable)
+        _value = value.ToString()!;
+      else
+      {
+        _value = string.Empty;
+        throw new InvalidOperationException("Value must be of type string or PatternValue.");
+      }
+    }
+  }
 
   /// <summary>
   /// The JSON Schema for the <see cref="PatternValue"/> object. This is a generated property and is not meant to be used directly.
@@ -36,8 +54,8 @@ public class PatternValue : IPatternValue
   /// <param name="patternValue"></param>
   public static implicit operator string(PatternValue patternValue)
   {
-    if (!string.IsNullOrEmpty(patternValue.Value))
-      return patternValue.Value.ToString();
+    if (!string.IsNullOrEmpty(patternValue.Value?.ToString()))
+      return patternValue.Value!.ToString();
     else
       return string.Empty;
   }
