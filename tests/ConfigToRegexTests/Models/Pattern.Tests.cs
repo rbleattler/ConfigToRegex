@@ -53,8 +53,9 @@ public class PatternTests : RegexRuleTestCore
     [Fact]
     public void Constructor_WithStringParameter_Yaml()
     {
-        var basicPatternFile = GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "basicPattern.yml");
-        var patternYaml = ReadFileAsString(basicPatternFile[0]);
+        var basicPatternFile = GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "basicpattern.yml");
+        Assert.True(basicPatternFile.Length > 0);
+        var patternYaml = ReadFileAsString(basicPatternFile.FirstOrDefault()!);
         // Convert from Yaml to Json to simplify the test
         var patternFromYaml = new Pattern(patternYaml);
         Assert.IsType<Guid>(Guid.Parse(patternFromYaml.Id!));
@@ -62,11 +63,13 @@ public class PatternTests : RegexRuleTestCore
         Assert.Equal("test", patternFromYaml.Value.Value);
 
     }
+
     [Fact]
     public void Constructor_WithStringParameter_Json()
     {
-        var basicPatternFile = GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "basicPattern.yml");
-        var patternYaml = ReadFileAsString(basicPatternFile[0]);
+        var basicPatternFile = GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "basicpattern.yml");
+        Assert.True(basicPatternFile.Length > 0);
+        var patternYaml = ReadFileAsString(basicPatternFile.FirstOrDefault()!);
         // Convert from Yaml to Json to simplify the test
         var patternJson = YamlToJson(patternYaml);
         var patternFromJson = new Pattern(patternJson);
