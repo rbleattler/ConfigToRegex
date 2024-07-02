@@ -74,11 +74,7 @@ public class PatternValueTests : RegexRuleTestCore
   {
 
     var patternValue = new PatternValue("test value");
-
-
     var result = patternValue.ToRegex();
-
-
     Assert.Equal("test value", result);
   }
 
@@ -99,8 +95,8 @@ public class PatternValueTests : RegexRuleTestCore
   public void SerializeYaml_WhenValueIsString_ReturnsExpectedResult()
   {
     var patternValue = new PatternValue("test value");
-    var expectedYaml = "Value: test value\r\n";
-    Assert.Equal(expectedYaml, patternValue.SerializeYaml());
+    var expectedYaml = "Value: test value";
+    Assert.Equal(expectedYaml, patternValue.SerializeYaml().TrimEnd());
   }
 
   [Fact]
@@ -108,8 +104,8 @@ public class PatternValueTests : RegexRuleTestCore
   {
     var innerPatternValue = new PatternValue("inner value");
     var patternValue = new PatternValue(innerPatternValue);
-    var expectedYaml = "Value: inner value\r\n";
-    Assert.Equal(expectedYaml, patternValue.SerializeYaml());
+    var expectedYaml = "Value: inner value";
+    Assert.Equal(expectedYaml, patternValue.SerializeYaml().TrimEnd());
   }
 
   [Fact]

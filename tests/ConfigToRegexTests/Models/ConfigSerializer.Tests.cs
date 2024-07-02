@@ -186,8 +186,12 @@ Message: ";
 
         // Act
         var result = converter.ConvertJsonToYaml<Pattern>(jsonString);
-        result = result.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
-        expectedYaml = expectedYaml.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+        result = result.Replace("\r\n", "")
+                       .Replace("\n", "")
+                       .Replace(" ", "");
+        expectedYaml = expectedYaml.Replace("\r\n", "")
+                                   .Replace("\n", "")
+                                   .Replace(" ", "");
         // Assert (Using FluentAssertions)
         result.Should().Be(expectedYaml);
 
