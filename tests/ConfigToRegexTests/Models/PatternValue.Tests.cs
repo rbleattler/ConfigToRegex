@@ -28,6 +28,7 @@ public class PatternValueTests : RegexRuleTestCore
   {
     var value = "test";
     var patternValue = new PatternValue(value);
+    Assert.NotNull(patternValue);
     Assert.Equal(value, patternValue.Value);
   }
 
@@ -93,4 +94,75 @@ public class PatternValueTests : RegexRuleTestCore
 
     Assert.Equal(string.Empty, result);
   }
+
+  [Fact]
+  public void SerializeYaml_WhenValueIsString_ReturnsExpectedResult()
+  {
+    var patternValue = new PatternValue("test value");
+    var expectedYaml = "Value: test value\r\n";
+    Assert.Equal(expectedYaml, patternValue.SerializeYaml());
+  }
+
+  [Fact]
+  public void SerializeYaml_WhenValueIsPatternValue_ReturnsExpectedResult()
+  {
+    var innerPatternValue = new PatternValue("inner value");
+    var patternValue = new PatternValue(innerPatternValue);
+    var expectedYaml = "Value: inner value\r\n";
+    Assert.Equal(expectedYaml, patternValue.SerializeYaml());
+  }
+
+  [Fact]
+  public void SerializeJson_WhenValueIsString_ReturnsExpectedResult()
+  {
+    var patternValue = new PatternValue("test value");
+    var expectedJson = "{\"Value\":\"test value\"}";
+    Assert.Equal(expectedJson, patternValue.SerializeJson());
+  }
+
+  [Fact]
+  public void SerializeJson_WhenValueIsPatternValue_ReturnsExpectedResult()
+  {
+    var innerPatternValue = new PatternValue("inner value");
+    var patternValue = new PatternValue(innerPatternValue);
+    var expectedJson = "{\"Value\":\"inner value\"}";
+    Assert.Equal(expectedJson, patternValue.SerializeJson());
+  }
+
+  [Fact]
+  public void DeserializeJson_WhenValueIsString_ReturnsExpectedResult()
+  {
+    var jsonString = "{\"Value\":\"test value\"}";
+    var patternValue = new PatternValue();
+    patternValue.DeserializeJson(jsonString);
+    Assert.Equal("test value", patternValue.Value.ToString());
+  }
+
+  [Fact]
+  public void DeserializeJson_WhenValueIsPatternValue_ReturnsExpectedResult()
+  {
+    var jsonString = "{\"Value\":\"inner value\"}";
+    var patternValue = new PatternValue();
+    patternValue.DeserializeJson(jsonString);
+    Assert.Equal("inner value", patternValue.Value.ToString());
+  }
+
+  [Fact]
+  public void DeserializeYaml_WhenValueIsString_ReturnsExpectedResult()
+  {
+    var yamlString = "Value: test value";
+    var patternValue = new PatternValue();
+    patternValue.DeserializeYaml(yamlString);
+    Assert.Equal("test value", patternValue.Value);
+  }
+
+  [Fact]
+  public void DeserializeYaml_WhenValueIsPatternValue_ReturnsExpectedResult()
+  {
+    var yamlString = "Value: inner value";
+    var patternValue = new PatternValue();
+    patternValue.DeserializeYaml(yamlString);
+    Assert.Equal("inner value", patternValue.Value);
+  }
+
 }
