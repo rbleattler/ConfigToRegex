@@ -98,7 +98,7 @@ public class Pattern : IPattern
     {
       DeserializeJson(patternObject);
     }
-    else if (Regex.IsMatch(patternObject, Validation.Patterns.Yaml))
+    else if (Regex.IsMatch(patternObject, Helpers.Patterns.Yaml))
     {
       DeserializeYaml(patternObject);
     }

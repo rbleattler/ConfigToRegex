@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using NJsonSchema;
 using YamlDotNet.Serialization;
-
+using ConfigToRegex.Exceptions;
 
 namespace ConfigToRegex;
 
