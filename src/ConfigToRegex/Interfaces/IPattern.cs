@@ -43,7 +43,7 @@ public interface IPattern : IRegexSerializable
 
   internal bool IsYaml(string patternObject)
   {
-    return Regex.IsMatch(patternObject, Validation.Patterns.Yaml);
+    return Regex.IsMatch(patternObject, Helpers.Patterns.Yaml);
   }
 
 }
