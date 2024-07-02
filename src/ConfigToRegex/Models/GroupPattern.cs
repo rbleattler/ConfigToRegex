@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
 using NJsonSchema;
+using ConfigToRegex.Exceptions;
 
 namespace ConfigToRegex;
 
@@ -22,7 +23,7 @@ public class GroupPattern : IGroup
   IPatternValue IPattern.Value
   {
     get => (IPatternValue)Patterns;
-    set => Patterns = (List<Pattern>)value;
+    set => Patterns = (PatternList)value;
   }
   IQuantifier? IPattern.Quantifiers
   {
@@ -76,7 +77,7 @@ public class GroupPattern : IGroup
   /// <value><see cref="List{Pattern}"/></value>
   [JsonPropertyName("Patterns")]
   [YamlMember(Alias = "Patterns")]
-  public List<Pattern> Patterns { get; set; } = new List<Pattern>();
+  public PatternList Patterns { get; set; } = [];
 
   /// <summary>
   /// The message for the pattern. This is an optional property, used to provide additional information about the pattern.
@@ -102,7 +103,7 @@ public class GroupPattern : IGroup
 
   public GroupPattern()
   {
-    Patterns = new List<Pattern>();
+    Patterns = [];
   }
 
   public GroupPattern(string groupObjectPattern)
@@ -110,7 +111,7 @@ public class GroupPattern : IGroup
     if (string.IsNullOrWhiteSpace(groupObjectPattern))
     {
       Position = 0;
-      Patterns = new List<Pattern>();
+      Patterns = [];
       Properties = new PatternProperties();
       Quantifiers = new Quantifier();
       return;

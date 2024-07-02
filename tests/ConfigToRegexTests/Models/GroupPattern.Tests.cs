@@ -121,7 +121,7 @@ public class GroupPatternTests : RegexRuleTestCore
         var groupPattern = new GroupPattern
         {
             Properties = new PatternProperties { GroupType = "NamedCapturing", Name = "testGroup" },
-            Patterns = new List<Pattern> { new Pattern { Type = "CharacterClass", Value = new PatternValue { Value = "[a-z]" } } }
+            Patterns = [new Pattern { Type = "CharacterClass", Value = new PatternValue { Value = "[a-z]" } }]
         };
         var expected = "(?<testGroup>[a-z])"; // Assuming the named group syntax is correct
         Assert.Equal(expected, groupPattern.ToRegex());

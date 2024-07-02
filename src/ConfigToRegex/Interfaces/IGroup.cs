@@ -19,14 +19,14 @@ public interface IGroup : IPattern
   IPatternValue IPattern.Value
   {
     get => new PatternValue(Patterns);
-    set => Patterns = (List<Pattern>)value!;
+    set => Patterns = (PatternList)value!;
   }
 
   public new Quantifier? Quantifiers { get; set; }
 
   public int Position { get; set; }
 
-  public List<Pattern> Patterns { get; set; }
+  public PatternList Patterns { get; set; }
 
   [JsonIgnore]
   [YamlIgnore]
