@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ConfigToRegex</id>
+    <version>$version$</version>
+    <authors>Rob Bleattler</authors>
+    <owners>Rob Bleattler</owners>
+    <readme>README.md</readme>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A library for creating regular expressions from configuration files (YAML/JSON)</description>
+    <dependencies>
+      <group targetFramework="net8.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\net8.0\ConfigToRegex.dll" target="lib\net8.0" />
+    <file src="bin\Release\net8.0\ConfigToRegex.xml" target="lib\net8.0" />
+    <file src="bin\Release\net8.0\ConfigToRegex.pdb" target="lib\net8.0" />
+    <file src="..\..\README.md" target="" />
+    <file src="..\..\docs\*.md" target="docs" />
+  </files>
+</package>
