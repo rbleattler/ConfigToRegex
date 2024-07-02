@@ -14,7 +14,8 @@ namespace ConfigToRegex;
 [YamlSerializable]
 public class Pattern : IPattern
 {
-  private string _type = "Literal";
+  private const string __typeName = "Literal";
+  private string _type = __typeName;
 
   IPatternValue IPattern.Value
   {
