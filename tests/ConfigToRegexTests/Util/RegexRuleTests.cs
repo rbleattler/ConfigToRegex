@@ -4,6 +4,7 @@ namespace ConfigToRegexTests;
 
 public abstract class RegexRuleTestCore
 {
+    private static readonly string[] DefaultSearchPatterns = ["*.yml", "*.yaml", "*.json"];
 
     public static string ExampleFilesDirectory = GetExamplesDirectory();
 
@@ -17,10 +18,31 @@ public abstract class RegexRuleTestCore
         return File.ReadAllText(fullPath);
     }
 
+    public static string[] GetAllTestFiles([CallerFilePath] string directory = "", string[]? searchPatterns = null)
+    {
+        if (searchPatterns == null)
+        {
+            searchPatterns = DefaultSearchPatterns;
+        }
+        var directoryPath = Path.GetFullPath(directory);
+        var enumOptions = new EnumerationOptions
+        {
+            RecurseSubdirectories = true,
+            MatchCasing = MatchCasing.CaseInsensitive
+        };
+        var files = searchPatterns.SelectMany(searchPattern => Directory.GetFiles(directoryPath, searchPattern, enumOptions)).ToArray();
+        return files;
+    }
+
     public static string[] GetAllTestFiles([CallerFilePath] string directory = "", string searchPattern = "*.yml")
     {
         var directoryPath = Path.GetFullPath(directory);
-        var files = Directory.GetFiles(directoryPath, searchPattern, SearchOption.AllDirectories);
+        var enumOptions = new EnumerationOptions
+        {
+            RecurseSubdirectories = true,
+            MatchCasing = MatchCasing.CaseInsensitive
+        };
+        var files = Directory.GetFiles(directoryPath, searchPattern, enumOptions);
         return files;
     }
 
