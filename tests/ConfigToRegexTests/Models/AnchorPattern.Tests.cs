@@ -5,7 +5,7 @@ namespace ConfigToRegexTests;
 public class AnchorPatternTests : RegexRuleTestCore
 {
 
-    public string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "anchorPattern*.yml") ?? Array.Empty<string>();
+    public static string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "anchorPattern*.yml") ?? Array.Empty<string>();
 
     [Fact]
     public void AllAnchorPatterns_ConstructValidObjects_FromValidYaml()

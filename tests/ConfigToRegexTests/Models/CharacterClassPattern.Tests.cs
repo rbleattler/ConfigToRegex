@@ -7,7 +7,7 @@ namespace ConfigToRegexTests;
 
 public class CharacterClassPatternTests : RegexRuleTestCore
 {
-    public string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "characterClassPattern*.yml") ?? Array.Empty<string>();
+    public static string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "characterClassPattern*.yml") ?? Array.Empty<string>();
 
     [Fact]
     public void AllCharacterClassPatterns_ConstructValidObjects_FromValidYaml()

@@ -1,4 +1,5 @@
 using ConfigToRegex;
+using FluentAssertions;
 
 namespace ConfigToRegexTests;
 public class PatternValueTests : RegexRuleTestCore
@@ -20,7 +21,7 @@ public class PatternValueTests : RegexRuleTestCore
   public void DefaultConstructor_SetsValueTo_Null()
   {
     var patternValue = new PatternValue();
-    Assert.Equal(null, patternValue.Value);
+    patternValue.Value.Should().BeNull();
   }
 
   [Fact]
