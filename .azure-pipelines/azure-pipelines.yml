@@ -25,9 +25,15 @@ trigger:
       - .git
       - ./docs
 
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: rbleattler/az-pipelines-common-templates
+
 steps:
-  - template: /.azure-pipelines/set-version-date.yml
-  - template: /.azure-pipelines/build-dotnetcore.yml
+  - template: /.azure-pipelines/set-version-date.yml@templates
+  - template: /.azure-pipelines/build-dotnetcore.yml@templates
     parameters:
       slnFile: 'ConfigToRegex.sln'
       buildConfiguration: 'Release'
