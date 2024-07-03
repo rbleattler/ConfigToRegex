@@ -1,0 +1,8 @@
+{
+  "Id": "TestId",
+	"Type": "Literal",
+	"Value": {
+		"Value": "test"
+	},
+	"Message": "test"
+}
