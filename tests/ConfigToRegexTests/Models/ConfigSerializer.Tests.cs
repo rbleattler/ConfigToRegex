@@ -7,15 +7,22 @@ using Xunit;
 
 namespace ConfigToRegexTests;
 
-public class ConfigSerializerTests
+public class ConfigSerializerTests : RegexRuleTestCore
 {
+    public static string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPatterns: default) ?? [];
+
+    // We are trimming all the strings to remove any extra spaces, new lines, etc. because nix and windows have different line endings which can cause the tests to fail when comparing strings.
+    internal static string TrimString(string input)
+    {
+        return input.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+    }
+
     [Fact(DisplayName = "DeserializeYaml throws InvalidYamlException for invalid YAML")]
     public void DeserializeYaml_InvalidYaml_ThrowsInvalidYamlException()
     {
-        var converter = new ConfigSerializer();
         var invalidYaml = "invalid: yaml: -";
 
-        Action act = () => converter.DeserializeYaml<Pattern>(invalidYaml);
+        Action act = () => ConfigSerializer.DeserializeYaml<Pattern>(invalidYaml);
 
         act.Should()
            .Throw<InvalidYamlException>();
@@ -24,9 +31,8 @@ public class ConfigSerializerTests
     [Fact(DisplayName = "DeserializeYaml successfully deserializes valid YAML")]
     public void DeserializeYaml_ValidYaml_ReturnsDeserializedObject()
     {
-        var converter = new ConfigSerializer();
         var validYaml = "Type: Literal\nValue:\n   Value: abc";
-        var result = converter.DeserializeYaml<Pattern>(validYaml);
+        var result = ConfigSerializer.DeserializeYaml<Pattern>(validYaml);
 
         Assert.NotNull(result);
         Assert.Equal("Literal", result.Type);
@@ -38,16 +44,17 @@ public class ConfigSerializerTests
     public void SerializeYaml_ValidObject_ReturnsYamlString()
     {
         // Setup
-        var converter = new ConfigSerializer();
         var pattern = new Pattern { Properties = null, Id = "TestId", Type = "Literal", Value = new PatternValue { Value = "abc" } };
 
         // Act
-        var yamlString = converter.SerializeYaml(pattern);
+        var yamlString = ConfigSerializer.SerializeYaml(pattern);
 
         // Assert
         var expectedYaml = "Properties: Id: TestIdType: LiteralValue:  Value: abcQuantifiers: Message: ";
-        expectedYaml = expectedYaml.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
-        yamlString = yamlString.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+        // expectedYaml = expectedYaml.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+        expectedYaml = TrimString(expectedYaml);
+        // yamlString = yamlString.Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+        yamlString = TrimString(yamlString);
         Assert.Equal(expectedYaml, yamlString);
     }
 
@@ -142,13 +149,11 @@ public class ConfigSerializerTests
             "\"Message\":\"\"" +
             "}";
 
-        var converter = new ConfigSerializer();
-
         // Act
-        var actualJson = converter.ConvertYamlToJson<Pattern>(yamlString);
+        var actualJson = ConfigSerializer.ConvertYamlToJson<Pattern>(yamlString);
 
         // Assert
-        Assert.Equal(expectedJson, actualJson);
+        expectedJson.Should().BeEquivalentTo(actualJson);
     }
 
     [Fact(DisplayName = "ConvertJsonToYaml_ShouldConvertJsonStringToYaml")]
@@ -181,21 +186,96 @@ Value:
 Quantifiers:
 Message: ";
 
-
-        var converter = new ConfigSerializer();
-
         // Act
-        var result = converter.ConvertJsonToYaml<Pattern>(jsonString);
-        result = result.Replace("\r\n", "")
-                       .Replace("\n", "")
-                       .Replace(" ", "");
-        expectedYaml = expectedYaml.Replace("\r\n", "")
-                                   .Replace("\n", "")
-                                   .Replace(" ", "");
+        var result = ConfigSerializer.ConvertJsonToYaml<Pattern>(jsonString);
+        result = TrimString(result);
+        expectedYaml = TrimString(expectedYaml);
         // Assert (Using FluentAssertions)
         result.Should().Be(expectedYaml);
 
 
     }
 
+    [Fact(DisplayName = "DeserializeYamlFromFile_ShouldDeserializeYamlFile")]
+    public void DeserializeYamlFromFile_ShouldDeserializeYamlFile()
+    {
+        // Arrange
+        var yamlFile = AllTestFiles.First((f) => f.Contains("basicpattern.yml"));
+
+        // Act
+        var pattern = ConfigSerializer.DeserializeYamlFromFile<Pattern>(yamlFile);
+
+        // Assert
+        pattern.Should().BeOfType<Pattern>();
+        pattern.Type.Should().Be("Literal");
+        pattern.Value.ToString().Should().Be("test");
+    }
+
+    [Fact(DisplayName = "DeserializeJsonFromFile_ShouldDeserializeJsonFile")]
+    public void DeserializeJsonFromFile_ShouldDeserializeJsonFile()
+    {
+        // Arrange
+        var jsonFile = AllTestFiles.First((f) => f.Contains("basicpattern.json"));
+
+        // Act
+        var pattern = ConfigSerializer.DeserializeJsonFromFile<Pattern>(jsonFile);
+
+        // Assert
+        pattern.Should().BeOfType<Pattern>();
+        pattern.Type.Should().Be("Literal");
+        pattern.Value.ToString().Should().Be("test");
+    }
+
+    [Fact(DisplayName = "ParseConfigFileToRegex_ShouldDeserializeYamlFileToRegex")]
+    public void ParseConfigFileToRegex_ShouldDeserializeYamlFileToRegex()
+    {
+        // Arrange
+        var yamlFile = AllTestFiles.First((f) => f.Contains("basicpattern.yml"));
+
+        // Act
+        var regex = ConfigSerializer.ParseConfigFileToRegex<Pattern>(yamlFile);
+
+        // Assert
+        regex.Should().BeOfType<string>();
+        regex.Should().Be("test");
+    }
+    [Fact(DisplayName = "DeserializeConfigFileToRegex_ShouldDeserializeJsonFileToRegex")]
+    public void ParseConfigFileToRegex_ShouldDeserializeJsonFileToRegex()
+    {
+        // Arrange
+        var jsonFile = AllTestFiles.First((f) => f.Contains("basicpattern.json"));
+
+        // Act
+        var regex = ConfigSerializer.ParseConfigFileToRegex<Pattern>(jsonFile);
+
+        // Assert
+        regex.Should().BeOfType<string>();
+        regex.Should().Be("test");
+    }
+    [Fact(DisplayName = "ConvertFileToRegex_ShouldConvertYamlFileToRegex")]
+    public void ConvertFileToRegex_ShouldConvertYamlFileToRegex()
+    {
+        // Arrange
+        var yamlFile = AllTestFiles.First((f) => f.Contains("basicpattern.yml"));
+
+        // Act
+        var regex = ConfigSerializer.ConvertFileToRegex(yamlFile);
+
+        // Assert
+        regex.Should().BeOfType<string>();
+        regex.Should().Be("test");
+    }
+    [Fact(DisplayName = "ConvertFileToRegex_ShouldConvertJsonFileToRegex")]
+    public void ConvertFileToRegex_ShouldConvertJsonFileToRegex()
+    {
+        // Arrange
+        var jsonFile = AllTestFiles.First((f) => f.Contains("basicpattern.json"));
+
+        // Act
+        var regex = ConfigSerializer.ConvertFileToRegex(jsonFile);
+
+        // Assert
+        regex.Should().BeOfType<string>();
+        regex.Should().Be("test");
+    }
 }

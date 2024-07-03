@@ -13,6 +13,7 @@ namespace ConfigToRegex.Helpers;
 /// This class is responsible for converting configurations to regular expressions.
 /// It accepts configurations in JSON or YAML format.
 /// It can take string or file input.
+/// </remarks>
 public class ConfigSerializer
 {
 
@@ -31,7 +32,7 @@ public class ConfigSerializer
     /// <param name="yamlString"></param>
     /// <returns> An object of type <typeparamref name="T"/>. </returns>
     /// <exception cref="InvalidYamlException"></exception>
-    public T DeserializeYaml<T>(string yamlString) where T : IRegexSerializable
+    public static T DeserializeYaml<T>(string yamlString) where T : IRegexSerializable
     {
         try
         {
@@ -57,16 +58,41 @@ public class ConfigSerializer
     {
         try
         {
-            // new object of type T
-            T obj = Activator.CreateInstance<T>();
-            obj.DeserializeJson(jsonString);
-            return obj;
+            // Check if T is exactly IRegexSerializable
+            return DeserializeOrDefault<T>(jsonString);
         }
         catch (Exception ex)
         {
             throw new InvalidJsonException("Invalid JSON : " + ex.Message, ex);
         }
     }
+
+    private static T DeserializeOrDefault<T>(string inputString) where T : IRegexSerializable
+    {
+        var isJson = StringUtilities.IsJson(inputString);
+        var isYaml = StringUtilities.IsYaml(inputString);
+        Type defaultType = typeof(Pattern);
+        dynamic? obj;
+        if (typeof(T) == typeof(IRegexSerializable))
+        {
+            obj = Activator.CreateInstance(defaultType);
+        }
+        else
+        {
+            // T is a concrete type that implements IRegexSerializable
+            obj = Activator.CreateInstance<T>();
+        }
+        if (isJson)
+        {
+            obj?.DeserializeJson(inputString);
+        }
+        else if (isYaml)
+        {
+            obj?.DeserializeYaml(inputString);
+        }
+        return obj;
+    }
+
 
     /// <summary>
     /// Serializes an object of type <typeparamref name="T"/> to a YAML string.
@@ -75,7 +101,7 @@ public class ConfigSerializer
     /// <param name="patternObject"></param>
     /// <returns> A YAML representation of the object passed to <paramref name="patternObject"/>. </returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public string SerializeYaml<T>(T? patternObject) where T : IRegexSerializable
+    public static string SerializeYaml<T>(T? patternObject) where T : IRegexSerializable
     {
         if (patternObject is null)
         {
@@ -105,7 +131,7 @@ public class ConfigSerializer
     /// <typeparam name="T"></typeparam>
     /// <param name="yamlString"></param>
     /// <returns> A JSON representation of the YAML string passed to <paramref name="yamlString"/>. </returns>
-    public string ConvertYamlToJson<T>(string yamlString) where T : IRegexSerializable
+    public static string ConvertYamlToJson<T>(string yamlString) where T : IRegexSerializable
     {
         var patternObject = DeserializeYaml<T>(yamlString);
         return JsonSerializer.Serialize(patternObject);
@@ -117,7 +143,7 @@ public class ConfigSerializer
     /// <typeparam name="T"></typeparam>
     /// <param name="yamlString"></param>
     /// <returns> A regular expression string representation of the YAML string passed to <paramref name="yamlString"/>. </returns>
-    public string ConvertYamlToRegex<T>(string yamlString) where T : IRegexSerializable
+    public static string ConvertYamlToRegex<T>(string yamlString) where T : IRegexSerializable
     {
         var patternObject = DeserializeYaml<T>(yamlString);
         return patternObject.ToRegex();
@@ -129,7 +155,7 @@ public class ConfigSerializer
     /// <typeparam name="T"></typeparam>
     /// <param name="jsonString"></param>
     /// <returns> A regular expression string representation of the JSON string passed to <paramref name="jsonString"/>. </returns>
-    public string ConvertJsonToRegex<T>(string jsonString) where T : IRegexSerializable
+    public static string ConvertJsonToRegex<T>(string jsonString) where T : IRegexSerializable
     {
         var patternObject = DeserializeJson<T>(jsonString);
         return patternObject.ToRegex();
@@ -141,7 +167,7 @@ public class ConfigSerializer
     /// <typeparam name="T"></typeparam>
     /// <param name="jsonString"></param>
     /// <returns> A YAML representation of the JSON string passed to <paramref name="jsonString"/>. </returns>
-    public string ConvertJsonToYaml<T>(string jsonString) where T : IRegexSerializable
+    public static string ConvertJsonToYaml<T>(string jsonString) where T : IRegexSerializable
     {
         var patternObject = DeserializeJson<T>(jsonString);
         return SerializeYaml(patternObject);
@@ -153,58 +179,63 @@ public class ConfigSerializer
     /// <typeparam name="T"></typeparam>
     /// <param name="filePath"></param>
     /// <returns> An object of type <typeparamref name="T"/>. </returns>
-    public T DeserializeYamlFromFile<T>(string filePath) where T : IRegexSerializable
+    public static T DeserializeYamlFromFile<T>(string filePath) where T : IRegexSerializable
     {
         var yamlString = ReadConfigFile(filePath);
         return DeserializeYaml<T>(yamlString);
     }
 
     /// <summary>
-    /// Converts a YAML file to a JSON representation of the object defined in the file.
+    /// Deserializes a JSON file to an object of type <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="filePath"></param>
-    /// <returns> A JSON representation of the YAML file passed to <paramref name="filePath"/>. </returns>
-    public string ConvertYamlFileToJson<T>(string filePath) where T : IRegexSerializable
-    {
-        var yamlString = ReadConfigFile(filePath);
-        return ConvertYamlToJson<T>(yamlString);
-    }
-
-    /// <summary>
-    /// Converts a JSON file to a YAML representation of the object defined in the file.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="filePath"></param>
-    /// <returns> A YAML representation of the JSON file passed to <paramref name="filePath"/>. </returns>
-    public string ConvertJsonFileToYaml<T>(string filePath) where T : IRegexSerializable
+    /// <returns> An object of type <typeparamref name="T"/>. </returns>
+    public static T DeserializeJsonFromFile<T>(string filePath) where T : IRegexSerializable
     {
         var jsonString = ReadConfigFile(filePath);
-        return ConvertJsonToYaml<T>(jsonString);
+        return DeserializeJson<T>(jsonString);
     }
 
+    // /// <summary>
+    // /// Converts a YAML file to a JSON representation of the object defined in the file.
+    // /// </summary>
+    // /// <typeparam name="T"></typeparam>
+    // /// <param name="filePath"></param>
+    // /// <returns> A JSON representation of the YAML file passed to <paramref name="filePath"/>. </returns>
+    // public static string ConvertYamlFileToJson<T>(string filePath) where T : IRegexSerializable
+    // {
+    //     var yamlString = ReadConfigFile(filePath);
+    //     return ConvertYamlToJson<T>(yamlString);
+    // }
+
+    // /// <summary>
+    // /// Converts a JSON file to a YAML representation of the object defined in the file.
+    // /// </summary>
+    // /// <typeparam name="T"></typeparam>
+    // /// <param name="filePath"></param>
+    // /// <returns> A YAML representation of the JSON file passed to <paramref name="filePath"/>. </returns>
+    // public static string ConvertJsonFileToYaml<T>(string filePath) where T : IRegexSerializable
+    // {
+    //     var jsonString = ReadConfigFile(filePath);
+    //     return ConvertJsonToYaml<T>(jsonString);
+    // }
+
     /// <summary>
-    /// Converts a YAML file to a regular expression based on the object defined in the file.
+    /// Converts a config file to a regular expression based on the object defined in the file.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="filePath"></param>
-    /// <returns> A regular expression string representation of the YAML file passed to <paramref name="filePath"/>. </returns>
-    public string ConvertYamlFileToRegex<T>(string filePath) where T : IRegexSerializable
+    /// <returns> A regular expression string representation of the config file passed to <paramref name="filePath"/>. </returns>
+    public static string ParseConfigFileToRegex<T>(string filePath) where T : IRegexSerializable
     {
-        var yamlString = ReadConfigFile(filePath);
-        return ConvertYamlToRegex<T>(yamlString);
-    }
-
-    /// <summary>
-    /// Converts a JSON file to a regular expression based on the object defined in the file.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="filePath"></param>
-    /// <returns> A regular expression string representation of the JSON file passed to <paramref name="filePath"/>. </returns>
-    public string ConvertJsonFileToRegex<T>(string filePath) where T : IRegexSerializable
-    {
-        var jsonString = ReadConfigFile(filePath);
-        return ConvertJsonToRegex<T>(jsonString);
+        var configString = ReadConfigFile(filePath);
+        if (StringUtilities.IsJson(configString))
+            return ConvertJsonToRegex<T>(configString);
+        else if (StringUtilities.IsYaml(configString))
+            return ConvertYamlToRegex<T>(configString);
+        else
+            throw new InvalidConfigException("Invalid configuration file. Valid JSON or YAML is required.");
     }
 
     /// <summary>
@@ -213,7 +244,7 @@ public class ConfigSerializer
     /// <param name="filePath"></param>
     /// <param name="result"></param>
     /// <returns> A boolean indicating whether the parsing was successful. </returns>
-    public bool TryParseFile(out IRegexSerializable? result, string filePath)
+    public static bool TryParseFile(out IRegexSerializable? result, string filePath)
     {
         result = null;
         string fileContents = ReadConfigFile(filePath);
@@ -233,22 +264,18 @@ public class ConfigSerializer
     /// <param name="result"></param>
     /// <param name="fileContents"></param>
     /// <returns> A boolean indicating whether the parsing was successful. </returns>
-    public bool TryParse(ref IRegexSerializable? result, string fileContents)
+    public static bool TryParse(ref IRegexSerializable? result, string fileContents)
     {
-        if (StringUtilities.IsJson(fileContents))
+        try
         {
-            result = DeserializeJson<IRegexSerializable>(fileContents);
+            result = DeserializeOrDefault<IRegexSerializable>(fileContents);
             return true;
         }
-        else if (StringUtilities.IsYaml(fileContents))
-        {
-            result = DeserializeYaml<IRegexSerializable>(fileContents);
-            return true;
-        }
-        else
+        catch
         {
             return false; // Invalid format
         }
+
     }
 
     /// <summary>
@@ -257,18 +284,27 @@ public class ConfigSerializer
     /// <param name="filePath"></param>
     /// <returns> A regular expression string representation of the configuration file passed to <paramref name="filePath"/>. </returns>
     /// <exception cref="InvalidConfigException"></exception>
-    public string ConvertFileToRegex(string filePath)
+    public static string ConvertFileToRegex(string filePath)
     {
         IRegexSerializable? parsedFile;
+        bool success;
         try
         {
-            _ = TryParseFile(out parsedFile, filePath);
+            success = TryParseFile(out parsedFile, filePath);
         }
         catch
         {
             throw new InvalidConfigException("Invalid configuration file. Valid JSON or YAML is required.");
         }
-        return parsedFile!.ToRegex();
+        if (parsedFile is null)
+        {
+            throw new InvalidConfigException("Invalid configuration file. Valid JSON or YAML is required.");
+        }
+        if (success)
+        {
+            return parsedFile!.ToRegex();
+        }
+        throw new InvalidConfigException("Invalid configuration file. Valid JSON or YAML is required.");
     }
 
     private static string ReadConfigFile(string filePath)
