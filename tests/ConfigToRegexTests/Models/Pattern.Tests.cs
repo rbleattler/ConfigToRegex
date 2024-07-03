@@ -7,7 +7,7 @@ namespace ConfigToRegexTests;
 public class PatternTests : RegexRuleTestCore
 {
 
-    public string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "basicPattern*.yml") ?? Array.Empty<string>();
+    public static string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "basicPattern*.yml") ?? Array.Empty<string>();
 
     [Fact]
     public void AllPatterns_ConstructValidObjects_FromValidYaml()
@@ -78,7 +78,7 @@ public class PatternTests : RegexRuleTestCore
         Assert.Equal("test", patternFromJson.Value.ToString());
     }
 
-    private string YamlToJson(string patternYaml)
+    private static string YamlToJson(string patternYaml)
     {
         // use System.Text.Json and/or YamlDotNet to convert the Yaml string to Json
         var deserializer = new Deserializer();

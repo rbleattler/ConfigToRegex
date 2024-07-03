@@ -4,7 +4,7 @@ namespace ConfigToRegexTests;
 public class PatternValueTests : RegexRuleTestCore
 {
 
-  public string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "patternValue*.yml") ?? Array.Empty<string>();
+  public static string[] AllTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "patternValue*.yml") ?? [];
 
   [Fact]
   public void AllPatternValue_ConstructValidObjects_FromValidYaml()

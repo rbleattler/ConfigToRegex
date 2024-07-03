@@ -5,8 +5,8 @@ namespace ConfigToRegexTests;
 public class GroupPatternTests : RegexRuleTestCore
 {
 
-    public string[] AllYamlTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "groupPattern*.yml") ?? Array.Empty<string>();
-    public string[] AllJsonTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "groupPattern*.json") ?? Array.Empty<string>();
+    public static string[] AllYamlTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "groupPattern*.yml") ?? Array.Empty<string>();
+    public static string[] AllJsonTestFiles => GetAllTestFiles(directory: ExampleFilesDirectory, searchPattern: "groupPattern*.json") ?? Array.Empty<string>();
 
     [Fact(DisplayName = "GroupPattern constructor creates valid objects from valid JSON")]
     public void AllGroupPatterns_ConstructValidObjects_FromValidYaml()
